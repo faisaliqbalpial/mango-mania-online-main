@@ -373,8 +373,8 @@ function Landing() {
                     placeholder={t.namePh} value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field label={t.mobile} required icon={<span className="text-base">🇧🇩</span>}
-                      prefix="+880" placeholder="1XXXXXXXXX" value={form.mobile}
-                      pattern="^(?:\+8801|01|1)[3-9]\d{8}$" title="Please enter a valid Bangladeshi mobile number"
+                      placeholder="01XXXXXXXXX" value={form.mobile}
+                      pattern="^01[3-9]\d{8}$" title="Phone number must be exactly 11 digits starting with 01"
                       type="tel"
                       onChange={(v) => setForm({ ...form, mobile: v })} />
                     <Field label={t.email} optional optionalLabel={t.optional}
