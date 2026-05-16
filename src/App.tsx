@@ -256,9 +256,7 @@ export default function App() {
               <Button asChild size="lg" className="h-12 px-6 text-base">
                 <a href="#order">{t.orderNow}</a>
               </Button>
-              <Button asChild variant="outline" size="lg" className="h-12 px-6 text-base">
-                <a href="#why">{t.whyUs}</a>
-              </Button>
+
             </div>
             <div className="grid grid-cols-3 gap-4 pt-4">
               {[
@@ -281,27 +279,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Why us */}
-      <section id="why" className="bg-card py-14">
-        <div className="mx-auto max-w-6xl px-4">
-          <h2 className="text-center text-3xl font-bold">{t.whyTitle}</h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">{t.whySub}</p>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {t.why.map((c, i) => {
-              const Icon = [Leaf, ShieldCheck, Truck][i];
-              return (
-                <div key={c.title} className="rounded-2xl border border-border bg-background p-6 text-center shadow-sm">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold">{c.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{c.text}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+
 
       {/* Order */}
       <section id="order" className="py-14">
