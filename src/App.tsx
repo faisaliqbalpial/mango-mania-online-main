@@ -348,10 +348,13 @@ function Landing() {
               </Card>
 
               <Card step="4" title={t.step4}>
-                <form id="order-form" action="https://formsubmit.co/contact@ammerbari.com" method="POST" onSubmit={handleSubmit} className="space-y-5">
-                  <input type="hidden" name="_next" value={window.location.origin + "/thank-you"} />
-                  <input type="hidden" name="_subject" value={`New Pre-Order from ${form.name}`} />
-                  <input type="hidden" name="_captcha" value="false" />
+                <form id="order-form" action="https://api.web3forms.com/submit" method="POST" onSubmit={handleSubmit} className="space-y-5">
+                  {/* Replace b814ca83-3d5c-4008-a828-72c4352e69d7 with the key sent to your email */}
+                  <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
+                  <input type="hidden" name="redirect" value={window.location.origin + "/thank-you"} />
+                  <input type="hidden" name="subject" value={`New Pre-Order from ${form.name}`} />
+                  {/* Optional: Add from_name to see the customer name as the sender name */}
+                  <input type="hidden" name="from_name" value="Mango Mania Pre-Order" />
                   <input type="hidden" name="Name" value={form.name} />
                   <input type="hidden" name="Mobile" value={form.mobile} />
                   <input type="hidden" name="Email" value={form.email || "No email provided"} />
