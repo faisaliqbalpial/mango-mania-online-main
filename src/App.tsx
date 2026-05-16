@@ -37,7 +37,7 @@ const T = {
         <strong>খিরসাপাত/হিমসাগর</strong> আম অর্ডার করুন ১০, ২০ ও ৪০ কেজি প্যাকেজে। সারা বাংলাদেশে ডেলিভারি।
       </>
     ),
-    orderNow: "এখনই অর্ডার করুন",
+    orderNow: "এখনই প্রি-অর্ডার করুন",
     whyUs: "কেন আমরা",
     safe: "নিরাপদ ও বিশুদ্ধ",
     nationwide: "সারাদেশে ডেলিভারি",
@@ -49,7 +49,7 @@ const T = {
       { title: "কার্বাইড ও কেমিক্যাল মুক্ত", text: "প্রাকৃতিকভাবে পাকানো — পরিবারের জন্য সম্পূর্ণ নিরাপদ।" },
       { title: "সারা দেশে ডেলিভারি", text: "বাংলাদেশের সর্বত্র দ্রুত কুরিয়ার ও হোম ডেলিভারি।" },
     ],
-    placeOrder: "অর্ডার করুন",
+    placeOrder: "প্রি-অর্ডার করুন",
     placeOrderSub: "আম বাছাই করুন, প্যাকেজ নির্বাচন করুন, ডেলিভারির ঠিকানা দিন।",
     step1: "আমের জাত নির্বাচন করুন",
     step2: "প্যাকেজের আকার বেছে নিন",
@@ -72,18 +72,18 @@ const T = {
     selectDistrict: "আপনার জেলা নির্বাচন করুন",
     address: "সম্পূর্ণ ঠিকানা",
     addressPh: "বাড়ি নং, রোড নং, এলাকা, থানা...",
-    summary: "অর্ডার সারাংশ",
+    summary: "প্রি-অর্ডার সারাংশ",
     mangoLine: (kg: string, p: number) => `আম (${kg}কেজি × ৳${p})`,
     deliveryCharge: "ডেলিভারি চার্জ",
     total: "সর্বমোট",
-    confirm: "অর্ডার নিশ্চিত করুন",
+    confirm: "প্রি-অর্ডার নিশ্চিত করুন",
     cod: "ক্যাশ অন ডেলিভারি উপলব্ধ। আমরা কনফার্মের জন্য কল করব।",
     feesTitle: "ডেলিভারি চার্জ",
     pkg: "প্যাকেজ",
     courierAll: "কুরিয়ার (সারা বাংলাদেশ)",
     homeDel: "হোম ডেলিভারি",
     fillAll: "অনুগ্রহ করে সব আবশ্যক ঘর পূরণ করুন।",
-    ordered: (ref: string) => `অর্ডার সম্পন্ন! রেফারেন্স: ${ref}`,
+    ordered: (ref: string) => `প্রি-অর্ডার সম্পন্ন! রেফারেন্স: ${ref}`,
     footerTag: "ভালোবাসায় পৌঁছে দেই বাগানের তাজা আম।",
     location: "রাজশাহী, বাংলাদেশ",
     varieties: {
@@ -105,7 +105,7 @@ const T = {
         <strong>Himsagor</strong> mangoes in 10kg, 20kg & 40kg packages. Nationwide delivery across Bangladesh.
       </>
     ),
-    orderNow: "Order Now",
+    orderNow: "Pre-Order Now",
     whyUs: "Why Us",
     safe: "Safe & Pure",
     nationwide: "Nationwide Delivery",
@@ -117,7 +117,7 @@ const T = {
       { title: "Carbide & Chemical Free", text: "Naturally ripened — completely safe for your family." },
       { title: "Nationwide Delivery", text: "Fast courier and home delivery available across Bangladesh." },
     ],
-    placeOrder: "Place your order",
+    placeOrder: "Place your pre-order",
     placeOrderSub: "Choose your mango, pick a package, and tell us where to deliver.",
     step1: "Select Mango Variety",
     step2: "Choose Package Size",
@@ -140,18 +140,18 @@ const T = {
     selectDistrict: "Select your district",
     address: "Full Address",
     addressPh: "House No, Road No, Area, Thana...",
-    summary: "Order Summary",
+    summary: "Pre-Order Summary",
     mangoLine: (kg: string, p: number) => `Mango (${kg}kg × ৳${p})`,
     deliveryCharge: "Delivery charge",
     total: "Total",
-    confirm: "Confirm Order",
+    confirm: "Confirm Pre-Order",
     cod: "Cash on delivery available. We'll call to confirm.",
     feesTitle: "Delivery Charges",
     pkg: "Package",
     courierAll: "Courier (All BD)",
     homeDel: "Home Delivery",
     fillAll: "Please fill in all required fields.",
-    ordered: (ref: string) => `Order placed! Reference: ${ref}`,
+    ordered: (ref: string) => `Pre-order placed! Reference: ${ref}`,
     footerTag: "Garden-fresh mangoes, delivered with love.",
     location: "Rajshahi, Bangladesh",
     varieties: {
@@ -179,7 +179,7 @@ const DISTRICTS_BN: Record<string, string> = {
   Cumilla: "কুমিল্লা", Narayanganj: "নারায়ণগঞ্জ", Gazipur: "গাজীপুর", Other: "অন্যান্য",
 };
 
-const PRICE_PER_KG = 220;
+const PRICE_PER_KG = 110;
 const PACKAGE_KG: Record<Pkg, number> = { "10": 10, "20": 20, "40": 40 };
 const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
   courier: { "10": 200, "20": 200, "40": 300 },
