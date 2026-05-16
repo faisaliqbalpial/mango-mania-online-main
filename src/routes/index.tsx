@@ -1,0 +1,575 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { toast, Toaster } from "sonner";
+import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import logo from "@/assets/amerbari-logo.png";
+import heroImg from "@/assets/Real mango pic.webp";
+import nengraImg from "@/assets/nengra.jpg";
+import amropaliImg from "@/assets/amropali.jpg";
+import himsagorImg from "@/assets/himsagor.jpg";
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "আমের বাড়ি (Amerbari) — রাজশাহীর তাজা আম অর্ডার করুন" },
+      {
+        name: "description",
+        content:
+          "আমের বাড়ি (Amerbari) থেকে অর্ডার করুন ১০০% তাজা ন্যাংড়া, আম্রপালি ও খিরসাপাত/হিমসাগর আম। ১০ কেজি, ২০ কেজি ও ৪০ কেজি প্যাকেজ। সারা বাংলাদেশে ডেলিভারি।",
+      },
+      { property: "og:title", content: "আমের বাড়ি (Amerbari) — Mango Business" },
+      {
+        property: "og:description",
+        content: "রাজশাহীর আম, সবার প্রিয় নাম। Order fresh Rajshahi mangoes online.",
+      },
+    ],
+  }),
+  component: Landing,
+});
+
+type Lang = "bn" | "en";
+type Variety = "nengra" | "amropali" | "himsagor";
+type Pkg = "10" | "20" | "40";
+type Delivery = "courier" | "home";
+
+const T = {
+  bn: {
+    brand: "আমের বাড়ি",
+    tagline: "রাজশাহীর আম, সবার প্রিয় নাম",
+    callUs: "+৮৮০ ১XXX-XXXXXX",
+    fresh: "১০০% বাগানের তাজা",
+    heroTitle: "মিষ্টি, রসালো আম — সরাসরি বাগান থেকে আপনার দরজায়।",
+    heroSub: (
+      <>
+        প্রিমিয়াম <strong>ন্যাংড়া</strong>, <strong>আম্রপালি</strong> ও{" "}
+        <strong>খিরসাপাত/হিমসাগর</strong> আম অর্ডার করুন ১০, ২০ ও ৪০ কেজি প্যাকেজে। সারা বাংলাদেশে ডেলিভারি।
+      </>
+    ),
+    orderNow: "এখনই অর্ডার করুন",
+    whyUs: "কেন আমরা",
+    safe: "নিরাপদ ও বিশুদ্ধ",
+    nationwide: "সারাদেশে ডেলিভারি",
+    gardenFresh: "বাগানের তাজা",
+    whyTitle: "কেন আমাদের থেকে অর্ডার করবেন?",
+    whySub: "আমরা প্রতিটি আম বিশ্বস্ত বাগান থেকে হাতে বাছাই করি, যাতে আপনি মৌসুমের সেরাটাই পান।",
+    why: [
+      { title: "১০০% বাগানের তাজা", text: "সঠিক পাকা অবস্থায় হাতে বাছাই করে আপনার দরজায় পৌঁছে দেওয়া হয়।" },
+      { title: "কার্বাইড ও কেমিক্যাল মুক্ত", text: "প্রাকৃতিকভাবে পাকানো — পরিবারের জন্য সম্পূর্ণ নিরাপদ।" },
+      { title: "সারা দেশে ডেলিভারি", text: "বাংলাদেশের সর্বত্র দ্রুত কুরিয়ার ও হোম ডেলিভারি।" },
+    ],
+    placeOrder: "অর্ডার করুন",
+    placeOrderSub: "আম বাছাই করুন, প্যাকেজ নির্বাচন করুন, ডেলিভারির ঠিকানা দিন।",
+    step1: "আমের জাত নির্বাচন করুন",
+    step2: "প্যাকেজের আকার বেছে নিন",
+    step3: "ডেলিভারি পদ্ধতি",
+    step4: "ডেলিভারির তথ্য",
+    familyPack: "পারিবারিক প্যাক",
+    bestValue: "সেরা দাম",
+    bulkPack: "বাল্ক প্যাক",
+    courier: "কুরিয়ার (সারা বাংলাদেশ)",
+    courierFee: (f: number) => `৳${f} ডেলিভারি চার্জ`,
+    courierNote: "৩–৫ দিন। কুরিয়ার অফিস থেকে সংগ্রহ করুন।",
+    home: "হোম ডেলিভারি",
+    homeNote: "সরাসরি আপনার দরজায়।",
+    fullName: "পূর্ণ নাম",
+    namePh: "যেমন: রহিম উদ্দিন",
+    mobile: "মোবাইল নম্বর",
+    email: "ইমেইল",
+    optional: "(ঐচ্ছিক)",
+    area: "ডেলিভারি এলাকা",
+    selectDistrict: "আপনার জেলা নির্বাচন করুন",
+    address: "সম্পূর্ণ ঠিকানা",
+    addressPh: "বাড়ি নং, রোড নং, এলাকা, থানা...",
+    summary: "অর্ডার সারাংশ",
+    mangoLine: (kg: string, p: number) => `আম (${kg}কেজি × ৳${p})`,
+    deliveryCharge: "ডেলিভারি চার্জ",
+    total: "সর্বমোট",
+    confirm: "অর্ডার নিশ্চিত করুন",
+    cod: "ক্যাশ অন ডেলিভারি উপলব্ধ। আমরা কনফার্মের জন্য কল করব।",
+    feesTitle: "ডেলিভারি চার্জ",
+    pkg: "প্যাকেজ",
+    courierAll: "কুরিয়ার (সারা বাংলাদেশ)",
+    homeDel: "হোম ডেলিভারি",
+    fillAll: "অনুগ্রহ করে সব আবশ্যক ঘর পূরণ করুন।",
+    ordered: (ref: string) => `অর্ডার সম্পন্ন! রেফারেন্স: ${ref}`,
+    footerTag: "ভালোবাসায় পৌঁছে দেই বাগানের তাজা আম।",
+    location: "রাজশাহী, বাংলাদেশ",
+    varieties: {
+      nengra: { name: "ন্যাংড়া", sub: "Nengra", desc: "আঁশহীন, রসালো ও তীব্র সুগন্ধি — ভোজনরসিকদের প্রিয়।" },
+      amropali: { name: "আম্রপালি", sub: "Amropali", desc: "মিষ্টি, গাঢ়-কমলা শাঁস এবং সমৃদ্ধ স্বাদ।" },
+      himsagor: { name: "খিরসাপাত / হিমসাগর", sub: "Khirsapat / Himsagor", desc: "আমের রাজা — মাখনের মতো ঘন এবং অতুলনীয় মিষ্টি।" },
+    },
+    pkgSub: { "10": "পারিবারিক প্যাক", "20": "সেরা দাম", "40": "বাল্ক প্যাক" },
+  },
+  en: {
+    brand: "Amerbari",
+    tagline: "Rajshahi mangoes everyone loves",
+    callUs: "+880 1XXX-XXXXXX",
+    fresh: "100% Garden Fresh",
+    heroTitle: "Sweet, juicy mangoes — straight from the orchard to your door.",
+    heroSub: (
+      <>
+        Order premium <strong>Nengra</strong>, <strong>Amropali</strong> &{" "}
+        <strong>Himsagor</strong> mangoes in 10kg, 20kg & 40kg packages. Nationwide delivery across Bangladesh.
+      </>
+    ),
+    orderNow: "Order Now",
+    whyUs: "Why Us",
+    safe: "Safe & Pure",
+    nationwide: "Nationwide Delivery",
+    gardenFresh: "Garden Fresh",
+    whyTitle: "Why order from us?",
+    whySub: "We hand-pick every mango from trusted orchards so you get the very best of the season.",
+    why: [
+      { title: "100% Garden Fresh", text: "Hand-picked at the perfect ripeness and rushed to your doorstep." },
+      { title: "Carbide & Chemical Free", text: "Naturally ripened — completely safe for your family." },
+      { title: "Nationwide Delivery", text: "Fast courier and home delivery available across Bangladesh." },
+    ],
+    placeOrder: "Place your order",
+    placeOrderSub: "Choose your mango, pick a package, and tell us where to deliver.",
+    step1: "Select Mango Variety",
+    step2: "Choose Package Size",
+    step3: "Delivery Method",
+    step4: "Delivery Details",
+    familyPack: "Family pack",
+    bestValue: "Best value",
+    bulkPack: "Bulk pack",
+    courier: "Courier (All over BD)",
+    courierFee: (f: number) => `৳${f} delivery`,
+    courierNote: "3–5 days. Pick up from courier office.",
+    home: "Home Delivery",
+    homeNote: "Direct to your doorstep.",
+    fullName: "Full Name",
+    namePh: "e.g. Rahim Uddin",
+    mobile: "Mobile Number",
+    email: "Email",
+    optional: "(Optional)",
+    area: "Delivery Area",
+    selectDistrict: "Select your district",
+    address: "Full Address",
+    addressPh: "House No, Road No, Area, Thana...",
+    summary: "Order Summary",
+    mangoLine: (kg: string, p: number) => `Mango (${kg}kg × ৳${p})`,
+    deliveryCharge: "Delivery charge",
+    total: "Total",
+    confirm: "Confirm Order",
+    cod: "Cash on delivery available. We'll call to confirm.",
+    feesTitle: "Delivery Charges",
+    pkg: "Package",
+    courierAll: "Courier (All BD)",
+    homeDel: "Home Delivery",
+    fillAll: "Please fill in all required fields.",
+    ordered: (ref: string) => `Order placed! Reference: ${ref}`,
+    footerTag: "Garden-fresh mangoes, delivered with love.",
+    location: "Rajshahi, Bangladesh",
+    varieties: {
+      nengra: { name: "Nengra", sub: "ন্যাংড়া", desc: "Fiberless, juicy and intensely aromatic — a connoisseur's favourite." },
+      amropali: { name: "Amropali", sub: "আম্রপালি", desc: "Sweet, deep-orange flesh with a rich tropical flavour." },
+      himsagor: { name: "Khirsapat / Himsagor", sub: "খিরসাপাত / হিমসাগর", desc: "The king of mangoes — buttery texture and unmatched sweetness." },
+    },
+    pkgSub: { "10": "Family pack", "20": "Best value", "40": "Bulk pack" },
+  },
+} as const;
+
+const VARIETY_IMG: Record<Variety, string> = {
+  nengra: nengraImg,
+  amropali: amropaliImg,
+  himsagor: himsagorImg,
+};
+
+const DISTRICTS = [
+  "Dhaka", "Chattogram", "Rajshahi", "Khulna", "Sylhet", "Barishal",
+  "Rangpur", "Mymensingh", "Cumilla", "Narayanganj", "Gazipur", "Other",
+];
+const DISTRICTS_BN: Record<string, string> = {
+  Dhaka: "ঢাকা", Chattogram: "চট্টগ্রাম", Rajshahi: "রাজশাহী", Khulna: "খুলনা",
+  Sylhet: "সিলেট", Barishal: "বরিশাল", Rangpur: "রংপুর", Mymensingh: "ময়মনসিংহ",
+  Cumilla: "কুমিল্লা", Narayanganj: "নারায়ণগঞ্জ", Gazipur: "গাজীপুর", Other: "অন্যান্য",
+};
+
+const PRICE_PER_KG = 220;
+const PACKAGE_KG: Record<Pkg, number> = { "10": 10, "20": 20, "40": 40 };
+const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
+  courier: { "10": 200, "20": 200, "40": 300 },
+  home: { "10": 350, "20": 450, "40": 700 },
+};
+
+function Landing() {
+  const [lang, setLang] = useState<Lang>("bn");
+  const t = T[lang];
+  const [variety, setVariety] = useState<Variety>("himsagor");
+  const [pkg, setPkg] = useState<Pkg>("10");
+  const [delivery, setDelivery] = useState<Delivery>("courier");
+  const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", address: "" });
+
+  const subtotal = PACKAGE_KG[pkg] * PRICE_PER_KG;
+  const shipping = DELIVERY_FEES[delivery][pkg];
+  const total = subtotal + shipping;
+  const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.mobile || !form.area || !form.address) {
+      toast.error(t.fillAll);
+      return;
+    }
+    toast.success(t.ordered(orderRef), {
+      description: `${t.varieties[variety].name} • ${pkg}kg • ৳${total}`,
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground" lang={lang}>
+      <Toaster position="top-center" richColors />
+
+      {/* Top bar */}
+      <header className="border-b border-border bg-card">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt={`${t.brand} logo`} className="h-12 w-12 rounded-lg object-contain" />
+            <div>
+              <p className="text-sm font-bold leading-tight">{t.brand}</p>
+              <p className="text-xs text-muted-foreground leading-tight">{t.tagline}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLang(lang === "bn" ? "en" : "bn")}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold hover:bg-accent hover:text-accent-foreground transition"
+              aria-label="Switch language"
+            >
+              <Languages className="h-3.5 w-3.5" />
+              {lang === "bn" ? "EN" : "বাং"}
+            </button>
+            <a
+              href="tel:+8801XXXXXXXXX"
+              className="hidden items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground sm:inline-flex"
+            >
+              <Phone className="h-4 w-4" /> {t.callUs}
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 md:grid-cols-2 md:py-20">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
+              <Leaf className="h-3.5 w-3.5" /> {t.fresh}
+            </span>
+            <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">{t.heroTitle}</h1>
+            <p className="text-base text-muted-foreground md:text-lg">{t.heroSub}</p>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild size="lg" className="h-12 px-6 text-base">
+                <a href="#order">{t.orderNow}</a>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="h-12 px-6 text-base">
+                <a href="#why">{t.whyUs}</a>
+              </Button>
+            </div>
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              {[
+                { icon: ShieldCheck, label: t.safe },
+                { icon: Truck, label: t.nationwide },
+                { icon: Leaf, label: t.gardenFresh },
+              ].map((f) => (
+                <div key={f.label} className="flex flex-col items-center gap-1 text-center">
+                  <f.icon className="h-5 w-5 text-primary" />
+                  <span className="text-xs font-medium">{f.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-3xl opacity-30 blur-2xl" style={{ background: "var(--gradient-warm)" }} />
+            <img src={heroImg} alt="Fresh mangoes in a basket" width={1536} height={1024}
+              className="relative rounded-3xl object-cover shadow-[var(--shadow-soft)]" />
+          </div>
+        </div>
+      </section>
+
+      {/* Why us */}
+      <section id="why" className="bg-card py-14">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="text-center text-3xl font-bold">{t.whyTitle}</h2>
+          <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">{t.whySub}</p>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {t.why.map((c, i) => {
+              const Icon = [Leaf, ShieldCheck, Truck][i];
+              return (
+                <div key={c.title} className="rounded-2xl border border-border bg-background p-6 text-center shadow-sm">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold">{c.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{c.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Order */}
+      <section id="order" className="py-14">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold">{t.placeOrder}</h2>
+            <p className="mt-2 text-muted-foreground">{t.placeOrderSub}</p>
+          </div>
+
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_380px]">
+            <div className="space-y-8">
+              <Card step="1" title={t.step1}>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
+                    const v = t.varieties[key];
+                    const active = variety === key;
+                    return (
+                      <button type="button" key={key} onClick={() => setVariety(key)}
+                        className={cn("group relative overflow-hidden rounded-xl border-2 bg-card p-3 text-left transition-all",
+                          active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40")}>
+                        <div className="aspect-square overflow-hidden rounded-lg">
+                          <img src={VARIETY_IMG[key]} alt={v.name} loading="lazy"
+                            className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                        </div>
+                        <div className="mt-3">
+                          <p className="text-sm font-bold">{v.name}</p>
+                          <p className="text-xs text-muted-foreground">{v.sub}</p>
+                          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{v.desc}</p>
+                        </div>
+                        {active && (
+                          <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                            <Check className="h-3.5 w-3.5" />
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </Card>
+
+              <Card step="2" title={t.step2}>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
+                    const active = pkg === p;
+                    return (
+                      <button type="button" key={p} onClick={() => setPkg(p)}
+                        className={cn("rounded-xl border-2 p-4 text-left transition-all",
+                          active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
+                        <p className="text-2xl font-extrabold">{p} KG</p>
+                        <p className="mt-1 text-sm text-muted-foreground">৳{PACKAGE_KG[p] * PRICE_PER_KG}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{t.pkgSub[p]}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Card>
+
+              <Card step="3" title={t.step3}>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <DeliveryOption active={delivery === "courier"} onClick={() => setDelivery("courier")}
+                    icon={<Truck className="h-5 w-5" />} title={t.courier}
+                    sub={t.courierFee(DELIVERY_FEES.courier[pkg])} note={t.courierNote} />
+                  <DeliveryOption active={delivery === "home"} onClick={() => setDelivery("home")}
+                    icon={<Home className="h-5 w-5" />} title={t.home}
+                    sub={t.courierFee(DELIVERY_FEES.home[pkg])} note={t.homeNote} />
+                </div>
+              </Card>
+
+              <Card step="4" title={t.step4}>
+                <form id="order-form" onSubmit={handleSubmit} className="space-y-5">
+                  <Field label={t.fullName} required icon={<User className="h-4 w-4" />}
+                    placeholder={t.namePh} value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Field label={t.mobile} required icon={<span className="text-base">🇧🇩</span>}
+                      prefix="+880" placeholder="1XXXXXXXXX" value={form.mobile}
+                      onChange={(v) => setForm({ ...form, mobile: v })} />
+                    <Field label={t.email} optional optionalLabel={t.optional}
+                      icon={<Mail className="h-4 w-4" />} placeholder="you@example.com"
+                      value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">
+                      {t.area} <span className="text-destructive">*</span>
+                    </Label>
+                    <Select value={form.area} onValueChange={(v) => setForm({ ...form, area: v })}>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder={t.selectDistrict} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DISTRICTS.map((d) => (
+                          <SelectItem key={d} value={d}>
+                            {lang === "bn" ? DISTRICTS_BN[d] : d}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">
+                      {t.address} <span className="text-destructive">*</span>
+                    </Label>
+                    <div className="relative">
+                      <MapPin className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Textarea rows={3} placeholder={t.addressPh} className="pl-9"
+                        value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                    </div>
+                  </div>
+                </form>
+              </Card>
+            </div>
+
+            <aside className="lg:sticky lg:top-6 lg:self-start">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                <h3 className="text-lg font-bold">{t.summary}</h3>
+                <div className="mt-4 flex items-center gap-3 rounded-xl bg-accent/40 p-3">
+                  <img src={VARIETY_IMG[variety]} alt={t.varieties[variety].name} loading="lazy"
+                    className="h-14 w-14 rounded-lg object-cover" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold">{t.varieties[variety].name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {pkg} KG • {delivery === "home" ? t.home : t.courier}
+                    </p>
+                  </div>
+                </div>
+                <dl className="mt-5 space-y-2 text-sm">
+                  <Row label={t.mangoLine(pkg, PRICE_PER_KG)} value={`৳${subtotal}`} />
+                  <Row label={t.deliveryCharge} value={`৳${shipping}`} />
+                  <div className="my-3 border-t border-dashed border-border" />
+                  <Row label={t.total} value={`৳${total}`} bold />
+                </dl>
+                <Button type="submit" form="order-form" size="lg" className="mt-6 h-12 w-full text-base">
+                  {t.confirm}
+                </Button>
+                <p className="mt-3 text-center text-xs text-muted-foreground">{t.cod}</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-card py-12">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-center text-2xl font-bold">{t.feesTitle}</h2>
+          <div className="mt-6 overflow-hidden rounded-2xl border border-border">
+            <table className="w-full text-sm">
+              <thead className="bg-accent text-accent-foreground">
+                <tr>
+                  <th className="px-4 py-3 text-left">{t.pkg}</th>
+                  <th className="px-4 py-3 text-left">{t.courierAll}</th>
+                  <th className="px-4 py-3 text-left">{t.homeDel}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(["10", "20", "40"] as Pkg[]).map((p) => (
+                  <tr key={p} className="border-t border-border bg-background">
+                    <td className="px-4 py-3 font-semibold">{p} KG</td>
+                    <td className="px-4 py-3">৳{DELIVERY_FEES.courier[p]}</td>
+                    <td className="px-4 py-3">৳{DELIVERY_FEES.home[p]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border bg-card py-8">
+        <div className="mx-auto max-w-6xl px-4 text-center text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-2">
+            <img src={logo} alt="" className="h-8 w-8 object-contain" />
+            <p className="font-semibold text-foreground">{t.brand}</p>
+          </div>
+          <p className="mt-1">{t.footerTag}</p>
+          <p className="mt-1 text-xs">📍 {t.location} • © {new Date().getFullYear()}</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function Card({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+      <div className="mb-5 flex items-center gap-3 border-b border-border pb-4">
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-primary-foreground">
+          {step}
+        </span>
+        <h3 className="text-xl font-extrabold tracking-tight">{title}</h3>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function DeliveryOption({ active, onClick, icon, title, sub, note }: {
+  active: boolean; onClick: () => void; icon: React.ReactNode; title: string; sub: string; note: string;
+}) {
+  return (
+    <button type="button" onClick={onClick}
+      className={cn("flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all",
+        active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
+      <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-primary">
+        {icon}
+      </span>
+      <div className="flex-1">
+        <p className="text-sm font-bold">{title}</p>
+        <p className="text-sm text-primary">{sub}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{note}</p>
+      </div>
+    </button>
+  );
+}
+
+function Field({ label, required, optional, optionalLabel, icon, prefix, placeholder, value, onChange }: {
+  label: string; required?: boolean; optional?: boolean; optionalLabel?: string;
+  icon?: React.ReactNode; prefix?: string; placeholder?: string;
+  value: string; onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm font-semibold">
+        {label}{" "}
+        {required && <span className="text-destructive">*</span>}
+        {optional && <span className="text-xs font-normal text-muted-foreground">{optionalLabel}</span>}
+      </Label>
+      <div className="relative flex items-stretch">
+        {icon && (
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            {icon}
+          </span>
+        )}
+        {prefix && (
+          <span className="flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm font-medium">
+            {prefix}
+          </span>
+        )}
+        <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+          className={cn("h-11", icon && !prefix && "pl-9", prefix && "rounded-l-none")} />
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div className={cn("flex items-center justify-between", bold && "text-base font-bold")}>
+      <dt className={cn(!bold && "text-muted-foreground")}>{label}</dt>
+      <dd>{value}</dd>
+    </div>
+  );
+}
