@@ -1,0 +1,2114 @@
+{
+  "Barisal": [
+    {
+      "en": "Barisal Sadar",
+      "bn": "Barisal Sadar"
+    },
+    {
+      "en": "Gaurnadi",
+      "bn": "Gaurnadi"
+    },
+    {
+      "en": "Muladi",
+      "bn": "Muladi"
+    },
+    {
+      "en": "Mehendiganj",
+      "bn": "Mehendiganj"
+    },
+    {
+      "en": "Babuganj",
+      "bn": "Babuganj"
+    },
+    {
+      "en": "Hizla",
+      "bn": "Hizla"
+    },
+    {
+      "en": "Uzirpur",
+      "bn": "Uzirpur"
+    },
+    {
+      "en": "Bakarganj",
+      "bn": "Bakarganj"
+    },
+    {
+      "en": "Agailjhara",
+      "bn": "Agailjhara"
+    },
+    {
+      "en": "Banaripara",
+      "bn": "Banaripara"
+    }
+  ],
+  "Bhola": [
+    {
+      "en": "Bhola Sadar",
+      "bn": "Bhola Sadar"
+    },
+    {
+      "en": "Borhanuddin",
+      "bn": "Borhanuddin"
+    },
+    {
+      "en": "Daulatkhan",
+      "bn": "Daulatkhan"
+    },
+    {
+      "en": "Lalmohan",
+      "bn": "Lalmohan"
+    },
+    {
+      "en": "Tazumuddin",
+      "bn": "Tazumuddin"
+    },
+    {
+      "en": "Char Fasson",
+      "bn": "Char Fasson"
+    },
+    {
+      "en": "Monpura",
+      "bn": "Monpura"
+    }
+  ],
+  "Jhalokati": [
+    {
+      "en": "Jhalokati Sadar",
+      "bn": "Jhalokati Sadar"
+    },
+    {
+      "en": "Kathalia",
+      "bn": "Kathalia"
+    },
+    {
+      "en": "Nalchity",
+      "bn": "Nalchity"
+    },
+    {
+      "en": "Rajapur",
+      "bn": "Rajapur"
+    }
+  ],
+  "Patuakhali": [
+    {
+      "en": "Patuakhali Sadar",
+      "bn": "Patuakhali Sadar"
+    },
+    {
+      "en": "Dumki",
+      "bn": "Dumki"
+    },
+    {
+      "en": "Mirzaganj",
+      "bn": "Mirzaganj"
+    },
+    {
+      "en": "Dashmina",
+      "bn": "Dashmina"
+    },
+    {
+      "en": "Bauphal",
+      "bn": "Bauphal"
+    },
+    {
+      "en": "Kalapara",
+      "bn": "Kalapara"
+    },
+    {
+      "en": "Galachipa",
+      "bn": "Galachipa"
+    },
+    {
+      "en": "Rangabali",
+      "bn": "Rangabali"
+    }
+  ],
+  "Pirojpur": [
+    {
+      "en": "Bhandaria",
+      "bn": "Bhandaria"
+    },
+    {
+      "en": "Kaukhali",
+      "bn": "Kaukhali"
+    },
+    {
+      "en": "Mathbaria",
+      "bn": "Mathbaria"
+    },
+    {
+      "en": "Nazirpur",
+      "bn": "Nazirpur"
+    },
+    {
+      "en": "Pirojpur Sadar",
+      "bn": "Pirojpur Sadar"
+    },
+    {
+      "en": "Nesarabad",
+      "bn": "Nesarabad"
+    },
+    {
+      "en": "Indurkani",
+      "bn": "Indurkani"
+    }
+  ],
+  "Barguna": [
+    {
+      "en": "Barguna Sadar",
+      "bn": "Barguna Sadar"
+    },
+    {
+      "en": "Amtali",
+      "bn": "Amtali"
+    },
+    {
+      "en": "Betagi",
+      "bn": "Betagi"
+    },
+    {
+      "en": "Bamna",
+      "bn": "Bamna"
+    },
+    {
+      "en": "Patharghata",
+      "bn": "Patharghata"
+    },
+    {
+      "en": "Taltoli",
+      "bn": "Taltoli"
+    }
+  ],
+  "Chittagong": [
+    {
+      "en": "Anwara",
+      "bn": "Anwara"
+    },
+    {
+      "en": "Karnaphuli",
+      "bn": "Karnaphuli"
+    },
+    {
+      "en": "Chandanish",
+      "bn": "Chandanish"
+    },
+    {
+      "en": "Patiya",
+      "bn": "Patiya"
+    },
+    {
+      "en": "Fatickchari",
+      "bn": "Fatickchari"
+    },
+    {
+      "en": "Bashkhali",
+      "bn": "Bashkhali"
+    },
+    {
+      "en": "Boalkhali",
+      "bn": "Boalkhali"
+    },
+    {
+      "en": "Mirsharai",
+      "bn": "Mirsharai"
+    },
+    {
+      "en": "Raozan",
+      "bn": "Raozan"
+    },
+    {
+      "en": "Rangunia",
+      "bn": "Rangunia"
+    },
+    {
+      "en": "Lohagara",
+      "bn": "Lohagara"
+    },
+    {
+      "en": "Sandwip",
+      "bn": "Sandwip"
+    },
+    {
+      "en": "Satkania",
+      "bn": "Satkania"
+    },
+    {
+      "en": "Sitakunda",
+      "bn": "Sitakunda"
+    },
+    {
+      "en": "Hathazari",
+      "bn": "Hathazari"
+    }
+  ],
+  "Coxs Bazar": [
+    {
+      "en": "Ukhia",
+      "bn": "Ukhia"
+    },
+    {
+      "en": "Coxs Bazar Sadar",
+      "bn": "Coxs Bazar Sadar"
+    },
+    {
+      "en": "Kutubdia",
+      "bn": "Kutubdia"
+    },
+    {
+      "en": "Chakaria",
+      "bn": "Chakaria"
+    },
+    {
+      "en": "Teknaf",
+      "bn": "Teknaf"
+    },
+    {
+      "en": "Pekua",
+      "bn": "Pekua"
+    },
+    {
+      "en": "Maheshkhali",
+      "bn": "Maheshkhali"
+    },
+    {
+      "en": "Ramu",
+      "bn": "Ramu"
+    },
+    {
+      "en": "Idgao",
+      "bn": "Idgao"
+    }
+  ],
+  "Brahmanbaria": [
+    {
+      "en": "Ashuganj",
+      "bn": "Ashuganj"
+    },
+    {
+      "en": "Akahura",
+      "bn": "Akahura"
+    },
+    {
+      "en": "Kasba",
+      "bn": "Kasba"
+    },
+    {
+      "en": "Nabinagar",
+      "bn": "Nabinagar"
+    },
+    {
+      "en": "Nasirnagar",
+      "bn": "Nasirnagar"
+    },
+    {
+      "en": "Bancharampur",
+      "bn": "Bancharampur"
+    },
+    {
+      "en": "Brahmanbaria Sadar",
+      "bn": "Brahmanbaria Sadar"
+    },
+    {
+      "en": "Sarail",
+      "bn": "Sarail"
+    },
+    {
+      "en": "Bijoy Nagar",
+      "bn": "Bijoy Nagar"
+    }
+  ],
+  "Bandarban": [
+    {
+      "en": "Alikadam",
+      "bn": "Alikadam"
+    },
+    {
+      "en": "Thanchi",
+      "bn": "Thanchi"
+    },
+    {
+      "en": "Naikhongchhari",
+      "bn": "Naikhongchhari"
+    },
+    {
+      "en": "Bandarban Sadar",
+      "bn": "Bandarban Sadar"
+    },
+    {
+      "en": "Ruma",
+      "bn": "Ruma"
+    },
+    {
+      "en": "Ruma",
+      "bn": "Ruma"
+    },
+    {
+      "en": "Lama",
+      "bn": "Lama"
+    }
+  ],
+  "Khagrachhari": [
+    {
+      "en": "Khagrachhari Sadar",
+      "bn": "Khagrachhari Sadar"
+    },
+    {
+      "en": "Guimara",
+      "bn": "Guimara"
+    },
+    {
+      "en": "Dighinala",
+      "bn": "Dighinala"
+    },
+    {
+      "en": "Panchhari",
+      "bn": "Panchhari"
+    },
+    {
+      "en": "Mahalchhari",
+      "bn": "Mahalchhari"
+    },
+    {
+      "en": "Matiranga",
+      "bn": "Matiranga"
+    },
+    {
+      "en": "Manikchhari",
+      "bn": "Manikchhari"
+    },
+    {
+      "en": "Ramgarh",
+      "bn": "Ramgarh"
+    },
+    {
+      "en": "Laxmichhari",
+      "bn": "Laxmichhari"
+    }
+  ],
+  "Rangamati": [
+    {
+      "en": "Kaukhali",
+      "bn": "Kaukhali"
+    },
+    {
+      "en": "Kaptai",
+      "bn": "Kaptai"
+    },
+    {
+      "en": "Jurachari",
+      "bn": "Jurachari"
+    },
+    {
+      "en": "Naniarchar",
+      "bn": "Naniarchar"
+    },
+    {
+      "en": "Barkal",
+      "bn": "Barkal"
+    },
+    {
+      "en": "Bagaichhari",
+      "bn": "Bagaichhari"
+    },
+    {
+      "en": "Bilaischhari",
+      "bn": "Bilaischhari"
+    },
+    {
+      "en": "Rangamati Sadar",
+      "bn": "Rangamati Sadar"
+    },
+    {
+      "en": "Rajasthali",
+      "bn": "Rajasthali"
+    },
+    {
+      "en": "Langadu",
+      "bn": "Langadu"
+    }
+  ],
+  "Noakhali": [
+    {
+      "en": "Kabirhat",
+      "bn": "Kabirhat"
+    },
+    {
+      "en": "Companiganj",
+      "bn": "Companiganj"
+    },
+    {
+      "en": "Chatkhil",
+      "bn": "Chatkhil"
+    },
+    {
+      "en": "Noakhali Sadar",
+      "bn": "Noakhali Sadar"
+    },
+    {
+      "en": "Begumganj",
+      "bn": "Begumganj"
+    },
+    {
+      "en": "Subarnachar",
+      "bn": "Subarnachar"
+    },
+    {
+      "en": "Senbagh",
+      "bn": "Senbagh"
+    },
+    {
+      "en": "Sonaimuri",
+      "bn": "Sonaimuri"
+    },
+    {
+      "en": "Hatia",
+      "bn": "Hatia"
+    }
+  ],
+  "Lakshmipur": [
+    {
+      "en": "Kamalnagar",
+      "bn": "Kamalnagar"
+    },
+    {
+      "en": "Ramgati",
+      "bn": "Ramgati"
+    },
+    {
+      "en": "Ramganj",
+      "bn": "Ramganj"
+    },
+    {
+      "en": "Raipura",
+      "bn": "Raipura"
+    },
+    {
+      "en": "Lakshmipur Sadar",
+      "bn": "Lakshmipur Sadar"
+    }
+  ],
+  "Feni": [
+    {
+      "en": "Feni",
+      "bn": "Feni"
+    },
+    {
+      "en": "Daganbhuiyan",
+      "bn": "Daganbhuiyan"
+    },
+    {
+      "en": "Sonagazi",
+      "bn": "Sonagazi"
+    },
+    {
+      "en": "Chatkhil",
+      "bn": "Chatkhil"
+    },
+    {
+      "en": "Parshuram",
+      "bn": "Parshuram"
+    },
+    {
+      "en": "Fulgazi",
+      "bn": "Fulgazi"
+    }
+  ],
+  "Comilla": [
+    {
+      "en": "Burichang",
+      "bn": "Burichang"
+    },
+    {
+      "en": "Chandina",
+      "bn": "Chandina"
+    },
+    {
+      "en": "Daudkandi",
+      "bn": "Daudkandi"
+    },
+    {
+      "en": "Laksam",
+      "bn": "Laksam"
+    },
+    {
+      "en": "Brahmanpara",
+      "bn": "Brahmanpara"
+    },
+    {
+      "en": "Debidwar",
+      "bn": "Debidwar"
+    },
+    {
+      "en": "Chandagram",
+      "bn": "Chandagram"
+    },
+    {
+      "en": "Debidwar",
+      "bn": "Debidwar"
+    },
+    {
+      "en": "Homna",
+      "bn": "Homna"
+    },
+    {
+      "en": "Muradnagar",
+      "bn": "Muradnagar"
+    },
+    {
+      "en": "Nangalkot",
+      "bn": "Nangalkot"
+    },
+    {
+      "en": "Meghna",
+      "bn": "Meghna"
+    },
+    {
+      "en": "Titas",
+      "bn": "Titas"
+    },
+    {
+      "en": "Muradnagar",
+      "bn": "Muradnagar"
+    },
+    {
+      "en": "Comilla Adarshal",
+      "bn": "Comilla Adarshal"
+    },
+    {
+      "en": "Comilla South",
+      "bn": "Comilla South"
+    },
+    {
+      "en": "Lalmai",
+      "bn": "Lalmai"
+    }
+  ],
+  "Chandpur": [
+    {
+      "en": "Kachua",
+      "bn": "Kachua"
+    },
+    {
+      "en": "Chandpur Sadar",
+      "bn": "Chandpur Sadar"
+    },
+    {
+      "en": "Faridganj",
+      "bn": "Faridganj"
+    },
+    {
+      "en": "Matlab North",
+      "bn": "Matlab North"
+    },
+    {
+      "en": "Matlab South",
+      "bn": "Matlab South"
+    },
+    {
+      "en": "Shahrashti",
+      "bn": "Shahrashti"
+    },
+    {
+      "en": "Haimchar",
+      "bn": "Haimchar"
+    },
+    {
+      "en": "Hajiganj",
+      "bn": "Hajiganj"
+    }
+  ],
+  "Kishoreganj": [
+    {
+      "en": "Kishoreganj Sadar",
+      "bn": "Kishoreganj Sadar"
+    },
+    {
+      "en": "Astagram",
+      "bn": "Astagram"
+    },
+    {
+      "en": "Itna",
+      "bn": "Itna"
+    },
+    {
+      "en": "Karimganj",
+      "bn": "Karimganj"
+    },
+    {
+      "en": "Katiadi",
+      "bn": "Katiadi"
+    },
+    {
+      "en": "Kuliarchar",
+      "bn": "Kuliarchar"
+    },
+    {
+      "en": "Tarail",
+      "bn": "Tarail"
+    },
+    {
+      "en": "Nikli",
+      "bn": "Nikli"
+    },
+    {
+      "en": "Pakundia",
+      "bn": "Pakundia"
+    },
+    {
+      "en": "Bajitpur",
+      "bn": "Bajitpur"
+    },
+    {
+      "en": "Bhairab",
+      "bn": "Bhairab"
+    },
+    {
+      "en": "Mithamain",
+      "bn": "Mithamain"
+    },
+    {
+      "en": "Hossainpur",
+      "bn": "Hossainpur"
+    }
+  ],
+  "Gazipur": [
+    {
+      "en": "Kaliakair",
+      "bn": "Kaliakair"
+    },
+    {
+      "en": "Kaliganj",
+      "bn": "Kaliganj"
+    },
+    {
+      "en": "Kapasia",
+      "bn": "Kapasia"
+    },
+    {
+      "en": "Gazipur Sadar",
+      "bn": "Gazipur Sadar"
+    },
+    {
+      "en": "Sreepur",
+      "bn": "Sreepur"
+    }
+  ],
+  "Gopalganj": [
+    {
+      "en": "Gopalganj Sadar",
+      "bn": "Gopalganj Sadar"
+    },
+    {
+      "en": "Muksudpur",
+      "bn": "Muksudpur"
+    },
+    {
+      "en": "Kashiani",
+      "bn": "Kashiani"
+    },
+    {
+      "en": "Kotalipara",
+      "bn": "Kotalipara"
+    },
+    {
+      "en": "Tungipara",
+      "bn": "Tungipara"
+    }
+  ],
+  "Tangail": [
+    {
+      "en": "Tangail Sadar",
+      "bn": "Tangail Sadar"
+    },
+    {
+      "en": "Kalihati",
+      "bn": "Kalihati"
+    },
+    {
+      "en": "Ghatail",
+      "bn": "Ghatail"
+    },
+    {
+      "en": "Basail",
+      "bn": "Basail"
+    },
+    {
+      "en": "Gopalpur",
+      "bn": "Gopalpur"
+    },
+    {
+      "en": "Mirzapur",
+      "bn": "Mirzapur"
+    },
+    {
+      "en": "Bhuapur",
+      "bn": "Bhuapur"
+    },
+    {
+      "en": "Nagarpur",
+      "bn": "Nagarpur"
+    },
+    {
+      "en": "Madhupur",
+      "bn": "Madhupur"
+    },
+    {
+      "en": "Sakhipur",
+      "bn": "Sakhipur"
+    },
+    {
+      "en": "Delduar",
+      "bn": "Delduar"
+    },
+    {
+      "en": "Dhanbari",
+      "bn": "Dhanbari"
+    }
+  ],
+  "Dhaka": [
+    {
+      "en": "Tejgaon Development Circle",
+      "bn": "Tejgaon Development Circle"
+    },
+    {
+      "en": "Dohar",
+      "bn": "Dohar"
+    },
+    {
+      "en": "Nababganj",
+      "bn": "Nababganj"
+    },
+    {
+      "en": "Keraniganj",
+      "bn": "Keraniganj"
+    },
+    {
+      "en": "Savar",
+      "bn": "Savar"
+    },
+    {
+      "en": "Dhamrai",
+      "bn": "Dhamrai"
+    }
+  ],
+  "Narsingdi": [
+    {
+      "en": "Narsingdi Sadar",
+      "bn": "Narsingdi Sadar"
+    },
+    {
+      "en": "Raipur",
+      "bn": "Raipur"
+    },
+    {
+      "en": "Belabo",
+      "bn": "Belabo"
+    },
+    {
+      "en": "Palash",
+      "bn": "Palash"
+    },
+    {
+      "en": "Monohardi",
+      "bn": "Monohardi"
+    },
+    {
+      "en": "Shibpur",
+      "bn": "Shibpur"
+    }
+  ],
+  "Narayanganj": [
+    {
+      "en": "Narayanganj Sadar",
+      "bn": "Narayanganj Sadar"
+    },
+    {
+      "en": "Bandar",
+      "bn": "Bandar"
+    },
+    {
+      "en": "Araihazar",
+      "bn": "Araihazar"
+    },
+    {
+      "en": "Rupganj",
+      "bn": "Rupganj"
+    },
+    {
+      "en": "Sonargaon",
+      "bn": "Sonargaon"
+    }
+  ],
+  "Faridpur": [
+    {
+      "en": "Faridpur Sadar",
+      "bn": "Faridpur Sadar"
+    },
+    {
+      "en": "Boalmari",
+      "bn": "Boalmari"
+    },
+    {
+      "en": "Alfadanga",
+      "bn": "Alfadanga"
+    },
+    {
+      "en": "Madhukhali",
+      "bn": "Madhukhali"
+    },
+    {
+      "en": "Bhangura",
+      "bn": "Bhangura"
+    },
+    {
+      "en": "Nagarkanda",
+      "bn": "Nagarkanda"
+    },
+    {
+      "en": "Charbhadrasan",
+      "bn": "Charbhadrasan"
+    },
+    {
+      "en": "Sadarpur",
+      "bn": "Sadarpur"
+    },
+    {
+      "en": "Saltha",
+      "bn": "Saltha"
+    }
+  ],
+  "Madaripur": [
+    {
+      "en": "Madaripur Sadar",
+      "bn": "Madaripur Sadar"
+    },
+    {
+      "en": "Shibchar",
+      "bn": "Shibchar"
+    },
+    {
+      "en": "Kalkini",
+      "bn": "Kalkini"
+    },
+    {
+      "en": "Rajoir",
+      "bn": "Rajoir"
+    },
+    {
+      "en": "Dasar",
+      "bn": "Dasar"
+    }
+  ],
+  "Manikganj": [
+    {
+      "en": "Ghior",
+      "bn": "Ghior"
+    },
+    {
+      "en": "Daulatpur",
+      "bn": "Daulatpur"
+    },
+    {
+      "en": "Manikganj Sadar",
+      "bn": "Manikganj Sadar"
+    },
+    {
+      "en": "Shibalaya",
+      "bn": "Shibalaya"
+    },
+    {
+      "en": "Saturia",
+      "bn": "Saturia"
+    },
+    {
+      "en": "Singair",
+      "bn": "Singair"
+    },
+    {
+      "en": "Harirampur",
+      "bn": "Harirampur"
+    }
+  ],
+  "Munshiganj": [
+    {
+      "en": "Munshiganj Sadar",
+      "bn": "Munshiganj Sadar"
+    },
+    {
+      "en": "Tongibari",
+      "bn": "Tongibari"
+    },
+    {
+      "en": "Sreenagar",
+      "bn": "Sreenagar"
+    },
+    {
+      "en": "Lohajang",
+      "bn": "Lohajang"
+    },
+    {
+      "en": "Gazaria",
+      "bn": "Gazaria"
+    },
+    {
+      "en": "Sirajdikhan",
+      "bn": "Sirajdikhan"
+    }
+  ],
+  "Rajbari": [
+    {
+      "en": "Rajbari Sadar",
+      "bn": "Rajbari Sadar"
+    },
+    {
+      "en": "Goalandaghat",
+      "bn": "Goalandaghat"
+    },
+    {
+      "en": "Pangsha",
+      "bn": "Pangsha"
+    },
+    {
+      "en": "Baliakandi",
+      "bn": "Baliakandi"
+    },
+    {
+      "en": "Kalukhali",
+      "bn": "Kalukhali"
+    }
+  ],
+  "Shariatpur": [
+    {
+      "en": "Zajira",
+      "bn": "Zajira"
+    },
+    {
+      "en": "Shariatpur Sadar",
+      "bn": "Shariatpur Sadar"
+    },
+    {
+      "en": "Gosairhat",
+      "bn": "Gosairhat"
+    },
+    {
+      "en": "Damudya",
+      "bn": "Damudya"
+    },
+    {
+      "en": "Bhedarganj",
+      "bn": "Bhedarganj"
+    },
+    {
+      "en": "Naria",
+      "bn": "Naria"
+    }
+  ],
+  "Mymensingh": [
+    {
+      "en": "Trishal",
+      "bn": "Trishal"
+    },
+    {
+      "en": "Mymensingh Sadar",
+      "bn": "Mymensingh Sadar"
+    },
+    {
+      "en": "Ishwarganj",
+      "bn": "Ishwarganj"
+    },
+    {
+      "en": "Gaffargaon",
+      "bn": "Gaffargaon"
+    },
+    {
+      "en": "Gauripur",
+      "bn": "Gauripur"
+    },
+    {
+      "en": "Tarakanda",
+      "bn": "Tarakanda"
+    },
+    {
+      "en": "Dhobaura",
+      "bn": "Dhobaura"
+    },
+    {
+      "en": "Nandail",
+      "bn": "Nandail"
+    },
+    {
+      "en": "Fulbaria",
+      "bn": "Fulbaria"
+    },
+    {
+      "en": "Fulbaria",
+      "bn": "Fulbaria"
+    },
+    {
+      "en": "Bhaluka",
+      "bn": "Bhaluka"
+    },
+    {
+      "en": "Haluaghat",
+      "bn": "Haluaghat"
+    },
+    {
+      "en": "Muktagacha",
+      "bn": "Muktagacha"
+    }
+  ],
+  "Jamalpur": [
+    {
+      "en": "Eklaspur",
+      "bn": "Eklaspur"
+    },
+    {
+      "en": "Jamalpur Sadar",
+      "bn": "Jamalpur Sadar"
+    },
+    {
+      "en": "Dewanganj",
+      "bn": "Dewanganj"
+    },
+    {
+      "en": "Baksiganj",
+      "bn": "Baksiganj"
+    },
+    {
+      "en": "Madarganj",
+      "bn": "Madarganj"
+    },
+    {
+      "en": "Melandaha",
+      "bn": "Melandaha"
+    },
+    {
+      "en": "Sarishabari",
+      "bn": "Sarishabari"
+    }
+  ],
+  "Netrokona": [
+    {
+      "en": "Atpara",
+      "bn": "Atpara"
+    },
+    {
+      "en": "Kalamakanda",
+      "bn": "Kalamakanda"
+    },
+    {
+      "en": "Kendua",
+      "bn": "Kendua"
+    },
+    {
+      "en": "Khaliajuri",
+      "bn": "Khaliajuri"
+    },
+    {
+      "en": "Durgapur",
+      "bn": "Durgapur"
+    },
+    {
+      "en": "Netrokona Sadar",
+      "bn": "Netrokona Sadar"
+    },
+    {
+      "en": "Purbadhala",
+      "bn": "Purbadhala"
+    },
+    {
+      "en": "Barhatta",
+      "bn": "Barhatta"
+    },
+    {
+      "en": "Madan",
+      "bn": "Madan"
+    },
+    {
+      "en": "Mohanganj",
+      "bn": "Mohanganj"
+    }
+  ],
+  "Sherpur": [
+    {
+      "en": "Jhenaigati",
+      "bn": "Jhenaigati"
+    },
+    {
+      "en": "Nakla",
+      "bn": "Nakla"
+    },
+    {
+      "en": "Nalitabari",
+      "bn": "Nalitabari"
+    },
+    {
+      "en": "Sherpur Sadar",
+      "bn": "Sherpur Sadar"
+    },
+    {
+      "en": "Sreebardi",
+      "bn": "Sreebardi"
+    }
+  ],
+  "Kushtia": [
+    {
+      "en": "Kumarkhali",
+      "bn": "Kumarkhali"
+    },
+    {
+      "en": "Kushtia Sadar",
+      "bn": "Kushtia Sadar"
+    },
+    {
+      "en": "Khoksa",
+      "bn": "Khoksa"
+    },
+    {
+      "en": "Daulatpur",
+      "bn": "Daulatpur"
+    },
+    {
+      "en": "Bheramara",
+      "bn": "Bheramara"
+    },
+    {
+      "en": "Mirpur",
+      "bn": "Mirpur"
+    }
+  ],
+  "Khulna": [
+    {
+      "en": "Koyra",
+      "bn": "Koyra"
+    },
+    {
+      "en": "Dumuria",
+      "bn": "Dumuria"
+    },
+    {
+      "en": "Terkhada",
+      "bn": "Terkhada"
+    },
+    {
+      "en": "Dakope",
+      "bn": "Dakope"
+    },
+    {
+      "en": "Dighalia",
+      "bn": "Dighalia"
+    },
+    {
+      "en": "Paikgacha",
+      "bn": "Paikgacha"
+    },
+    {
+      "en": "Fultala",
+      "bn": "Fultala"
+    },
+    {
+      "en": "Botiaghata",
+      "bn": "Botiaghata"
+    },
+    {
+      "en": "Rupsa",
+      "bn": "Rupsa"
+    }
+  ],
+  "Chuadanga": [
+    {
+      "en": "Alamdanga",
+      "bn": "Alamdanga"
+    },
+    {
+      "en": "Chuadanga Sadar",
+      "bn": "Chuadanga Sadar"
+    },
+    {
+      "en": "Jibannagar",
+      "bn": "Jibannagar"
+    },
+    {
+      "en": "Damurhuda",
+      "bn": "Damurhuda"
+    }
+  ],
+  "Jhenaidah": [
+    {
+      "en": "Kaliganj",
+      "bn": "Kaliganj"
+    },
+    {
+      "en": "Kotchandpur",
+      "bn": "Kotchandpur"
+    },
+    {
+      "en": "Jhenaidah Sadar",
+      "bn": "Jhenaidah Sadar"
+    },
+    {
+      "en": "Maheshpur",
+      "bn": "Maheshpur"
+    },
+    {
+      "en": "Shailkupa",
+      "bn": "Shailkupa"
+    },
+    {
+      "en": "Harinakundu",
+      "bn": "Harinakundu"
+    }
+  ],
+  "Narail": [
+    {
+      "en": "Kalia",
+      "bn": "Kalia"
+    },
+    {
+      "en": "Narail Sadar",
+      "bn": "Narail Sadar"
+    },
+    {
+      "en": "Lohagara",
+      "bn": "Lohagara"
+    }
+  ],
+  "Bagerhat": [
+    {
+      "en": "Kachua",
+      "bn": "Kachua"
+    },
+    {
+      "en": "Chitalmari",
+      "bn": "Chitalmari"
+    },
+    {
+      "en": "Fakirhat",
+      "bn": "Fakirhat"
+    },
+    {
+      "en": "Bagerhat Sadar",
+      "bn": "Bagerhat Sadar"
+    },
+    {
+      "en": "Mongla",
+      "bn": "Mongla"
+    },
+    {
+      "en": "Morrelganj",
+      "bn": "Morrelganj"
+    },
+    {
+      "en": "Mollahat",
+      "bn": "Mollahat"
+    },
+    {
+      "en": "Rampal",
+      "bn": "Rampal"
+    },
+    {
+      "en": "Sarankhola",
+      "bn": "Sarankhola"
+    }
+  ],
+  "Magura": [
+    {
+      "en": "Magura Sadar",
+      "bn": "Magura Sadar"
+    },
+    {
+      "en": "Mohammadpur",
+      "bn": "Mohammadpur"
+    },
+    {
+      "en": "Shalikha",
+      "bn": "Shalikha"
+    },
+    {
+      "en": "Sreepur",
+      "bn": "Sreepur"
+    }
+  ],
+  "Meherpur": [
+    {
+      "en": "Gangni",
+      "bn": "Gangni"
+    },
+    {
+      "en": "Meherpur Sadar",
+      "bn": "Meherpur Sadar"
+    },
+    {
+      "en": "Mujibnagar",
+      "bn": "Mujibnagar"
+    }
+  ],
+  "Jessore": [
+    {
+      "en": "Abhaynagar",
+      "bn": "Abhaynagar"
+    },
+    {
+      "en": "Keshabpur",
+      "bn": "Keshabpur"
+    },
+    {
+      "en": "Chaugacha",
+      "bn": "Chaugacha"
+    },
+    {
+      "en": "Jhikargacha",
+      "bn": "Jhikargacha"
+    },
+    {
+      "en": "Bagherpara",
+      "bn": "Bagherpara"
+    },
+    {
+      "en": "Manirampur",
+      "bn": "Manirampur"
+    },
+    {
+      "en": "Jessore Sadar",
+      "bn": "Jessore Sadar"
+    },
+    {
+      "en": "Sharsha",
+      "bn": "Sharsha"
+    }
+  ],
+  "Satkhira": [
+    {
+      "en": "Satkhira Sadar",
+      "bn": "Satkhira Sadar"
+    },
+    {
+      "en": "Assasuni",
+      "bn": "Assasuni"
+    },
+    {
+      "en": "Kalaroa",
+      "bn": "Kalaroa"
+    },
+    {
+      "en": "Kaliganj",
+      "bn": "Kaliganj"
+    },
+    {
+      "en": "Tala",
+      "bn": "Tala"
+    },
+    {
+      "en": "Debhata",
+      "bn": "Debhata"
+    },
+    {
+      "en": "Shyamnagar",
+      "bn": "Shyamnagar"
+    }
+  ],
+  "Chapainawabganj": [
+    {
+      "en": "Chapainawabganj Sadar",
+      "bn": "Chapainawabganj Sadar"
+    },
+    {
+      "en": "Gomastapur",
+      "bn": "Gomastapur"
+    },
+    {
+      "en": "Nachoile",
+      "bn": "Nachoile"
+    },
+    {
+      "en": "Bholahat",
+      "bn": "Bholahat"
+    },
+    {
+      "en": "Shibganj",
+      "bn": "Shibganj"
+    }
+  ],
+  "Joypurhat": [
+    {
+      "en": "Joypurhat Sadar",
+      "bn": "Joypurhat Sadar"
+    },
+    {
+      "en": "Akelpur",
+      "bn": "Akelpur"
+    },
+    {
+      "en": "Kalai",
+      "bn": "Kalai"
+    },
+    {
+      "en": "Khetlal",
+      "bn": "Khetlal"
+    },
+    {
+      "en": "Panchbibi",
+      "bn": "Panchbibi"
+    }
+  ],
+  "Naogaon": [
+    {
+      "en": "Patnitala",
+      "bn": "Patnitala"
+    },
+    {
+      "en": "Dhamoirhat",
+      "bn": "Dhamoirhat"
+    },
+    {
+      "en": "Mohadevpur",
+      "bn": "Mohadevpur"
+    },
+    {
+      "en": "Porsha",
+      "bn": "Porsha"
+    },
+    {
+      "en": "Sapahar",
+      "bn": "Sapahar"
+    },
+    {
+      "en": "Badalgachhi",
+      "bn": "Badalgachhi"
+    },
+    {
+      "en": "Manda",
+      "bn": "Manda"
+    },
+    {
+      "en": "Niamatpur",
+      "bn": "Niamatpur"
+    },
+    {
+      "en": "Atrai",
+      "bn": "Atrai"
+    },
+    {
+      "en": "Raninagar",
+      "bn": "Raninagar"
+    },
+    {
+      "en": "Naogaon Sadar",
+      "bn": "Naogaon Sadar"
+    }
+  ],
+  "Natore": [
+    {
+      "en": "Natore Sadar",
+      "bn": "Natore Sadar"
+    },
+    {
+      "en": "Bagatipara",
+      "bn": "Bagatipara"
+    },
+    {
+      "en": "Baraigram",
+      "bn": "Baraigram"
+    },
+    {
+      "en": "Gurudaspur",
+      "bn": "Gurudaspur"
+    },
+    {
+      "en": "Lalpur",
+      "bn": "Lalpur"
+    },
+    {
+      "en": "Singra",
+      "bn": "Singra"
+    },
+    {
+      "en": "Naldanga",
+      "bn": "Naldanga"
+    }
+  ],
+  "Pabna": [
+    {
+      "en": "Atgharia",
+      "bn": "Atgharia"
+    },
+    {
+      "en": "Ishwardi",
+      "bn": "Ishwardi"
+    },
+    {
+      "en": "Chatmohar",
+      "bn": "Chatmohar"
+    },
+    {
+      "en": "Pabna Sadar",
+      "bn": "Pabna Sadar"
+    },
+    {
+      "en": "Faridpur",
+      "bn": "Faridpur"
+    },
+    {
+      "en": "Bera",
+      "bn": "Bera"
+    },
+    {
+      "en": "Bhangura",
+      "bn": "Bhangura"
+    },
+    {
+      "en": "Santhia",
+      "bn": "Santhia"
+    },
+    {
+      "en": "Sujanagar",
+      "bn": "Sujanagar"
+    }
+  ],
+  "Bogura": [
+    {
+      "en": "Shajahanpur",
+      "bn": "Shajahanpur"
+    },
+    {
+      "en": "Adamdighi",
+      "bn": "Adamdighi"
+    },
+    {
+      "en": "Bogura Sadar",
+      "bn": "Bogura Sadar"
+    },
+    {
+      "en": "Dhunat",
+      "bn": "Dhunat"
+    },
+    {
+      "en": "Dupchanchia",
+      "bn": "Dupchanchia"
+    },
+    {
+      "en": "Gabtali",
+      "bn": "Gabtali"
+    },
+    {
+      "en": "Kahalu",
+      "bn": "Kahalu"
+    },
+    {
+      "en": "Nandigram",
+      "bn": "Nandigram"
+    },
+    {
+      "en": "Sariakandi",
+      "bn": "Sariakandi"
+    },
+    {
+      "en": "Sherpur",
+      "bn": "Sherpur"
+    },
+    {
+      "en": "Shibganj",
+      "bn": "Shibganj"
+    },
+    {
+      "en": "Sonatala",
+      "bn": "Sonatala"
+    }
+  ],
+  "Rajshahi": [
+    {
+      "en": "Godagari",
+      "bn": "Godagari"
+    },
+    {
+      "en": "Tanore",
+      "bn": "Tanore"
+    },
+    {
+      "en": "Mohanpur",
+      "bn": "Mohanpur"
+    },
+    {
+      "en": "Bagmara",
+      "bn": "Bagmara"
+    },
+    {
+      "en": "Durgapur",
+      "bn": "Durgapur"
+    },
+    {
+      "en": "Bagha",
+      "bn": "Bagha"
+    },
+    {
+      "en": "Charghat",
+      "bn": "Charghat"
+    },
+    {
+      "en": "Paba",
+      "bn": "Paba"
+    },
+    {
+      "en": "Puthia",
+      "bn": "Puthia"
+    }
+  ],
+  "Sirajganj": [
+    {
+      "en": "Belkuchi",
+      "bn": "Belkuchi"
+    },
+    {
+      "en": "Kamarkhanda",
+      "bn": "Kamarkhanda"
+    },
+    {
+      "en": "Chauhali",
+      "bn": "Chauhali"
+    },
+    {
+      "en": "Kazipur",
+      "bn": "Kazipur"
+    },
+    {
+      "en": "Raiganj",
+      "bn": "Raiganj"
+    },
+    {
+      "en": "Shahjadpur",
+      "bn": "Shahjadpur"
+    },
+    {
+      "en": "Sirajganj Sadar",
+      "bn": "Sirajganj Sadar"
+    },
+    {
+      "en": "Tarash",
+      "bn": "Tarash"
+    },
+    {
+      "en": "Ullapara",
+      "bn": "Ullapara"
+    }
+  ],
+  "Kurigram": [
+    {
+      "en": "Ulipur",
+      "bn": "Ulipur"
+    },
+    {
+      "en": "Kurigram Sadar",
+      "bn": "Kurigram Sadar"
+    },
+    {
+      "en": "Char Rajibpur",
+      "bn": "Char Rajibpur"
+    },
+    {
+      "en": "Chilmari",
+      "bn": "Chilmari"
+    },
+    {
+      "en": "Nageshwari",
+      "bn": "Nageshwari"
+    },
+    {
+      "en": "Fulbari",
+      "bn": "Fulbari"
+    },
+    {
+      "en": "Bhurungamari",
+      "bn": "Bhurungamari"
+    },
+    {
+      "en": "Rajabhat",
+      "bn": "Rajabhat"
+    },
+    {
+      "en": "Rajarhat",
+      "bn": "Rajarhat"
+    }
+  ],
+  "Gaibandha": [
+    {
+      "en": "Gaibandha Sadar",
+      "bn": "Gaibandha Sadar"
+    },
+    {
+      "en": "Sadullapur",
+      "bn": "Sadullapur"
+    },
+    {
+      "en": "Phulchhari",
+      "bn": "Phulchhari"
+    },
+    {
+      "en": "Gobindaganj",
+      "bn": "Gobindaganj"
+    },
+    {
+      "en": "Palashbari",
+      "bn": "Palashbari"
+    },
+    {
+      "en": "Saghata",
+      "bn": "Saghata"
+    },
+    {
+      "en": "Sunamganj",
+      "bn": "Sunamganj"
+    }
+  ],
+  "Thakurgaon": [
+    {
+      "en": "Thakurgaon Sadar",
+      "bn": "Thakurgaon Sadar"
+    },
+    {
+      "en": "Baliadangi",
+      "bn": "Baliadangi"
+    },
+    {
+      "en": "Pirganj",
+      "bn": "Pirganj"
+    },
+    {
+      "en": "Haripur",
+      "bn": "Haripur"
+    },
+    {
+      "en": "Rishankhail",
+      "bn": "Rishankhail"
+    }
+  ],
+  "Dinajpur": [
+    {
+      "en": "Dinajpur Sadar",
+      "bn": "Dinajpur Sadar"
+    },
+    {
+      "en": "Birampur",
+      "bn": "Birampur"
+    },
+    {
+      "en": "Khansama",
+      "bn": "Khansama"
+    },
+    {
+      "en": "Birganj",
+      "bn": "Birganj"
+    },
+    {
+      "en": "Bochaganj",
+      "bn": "Bochaganj"
+    },
+    {
+      "en": "Fulbari",
+      "bn": "Fulbari"
+    },
+    {
+      "en": "Chirirbandar",
+      "bn": "Chirirbandar"
+    },
+    {
+      "en": "Ghoraghat",
+      "bn": "Ghoraghat"
+    },
+    {
+      "en": "Hakimpur",
+      "bn": "Hakimpur"
+    },
+    {
+      "en": "Kaharole",
+      "bn": "Kaharole"
+    },
+    {
+      "en": "Nababganj",
+      "bn": "Nababganj"
+    },
+    {
+      "en": "Parbatipur",
+      "bn": "Parbatipur"
+    },
+    {
+      "en": "Birampur",
+      "bn": "Birampur"
+    }
+  ],
+  "Nilphamari": [
+    {
+      "en": "Nilphamari Sadar",
+      "bn": "Nilphamari Sadar"
+    },
+    {
+      "en": "Domar",
+      "bn": "Domar"
+    },
+    {
+      "en": "Dimla",
+      "bn": "Dimla"
+    },
+    {
+      "en": "Jaldhaka",
+      "bn": "Jaldhaka"
+    },
+    {
+      "en": "Kishoreganj",
+      "bn": "Kishoreganj"
+    },
+    {
+      "en": "Syedpur",
+      "bn": "Syedpur"
+    }
+  ],
+  "Panchagarh": [
+    {
+      "en": "Atwari",
+      "bn": "Atwari"
+    },
+    {
+      "en": "Tetulia",
+      "bn": "Tetulia"
+    },
+    {
+      "en": "Debiganj",
+      "bn": "Debiganj"
+    },
+    {
+      "en": "Panchagarh Sadar",
+      "bn": "Panchagarh Sadar"
+    },
+    {
+      "en": "Boda",
+      "bn": "Boda"
+    }
+  ],
+  "Rangpur": [
+    {
+      "en": "Kaunia",
+      "bn": "Kaunia"
+    },
+    {
+      "en": "Gangachara",
+      "bn": "Gangachara"
+    },
+    {
+      "en": "Taraganj",
+      "bn": "Taraganj"
+    },
+    {
+      "en": "Pirganj",
+      "bn": "Pirganj"
+    },
+    {
+      "en": "Pirgacha",
+      "bn": "Pirgacha"
+    },
+    {
+      "en": "Badarganj",
+      "bn": "Badarganj"
+    },
+    {
+      "en": "Mithapukur",
+      "bn": "Mithapukur"
+    },
+    {
+      "en": "Rangpur Sadar",
+      "bn": "Rangpur Sadar"
+    }
+  ],
+  "Lalmonirhat": [
+    {
+      "en": "Aditmari",
+      "bn": "Aditmari"
+    },
+    {
+      "en": "Kaliganj",
+      "bn": "Kaliganj"
+    },
+    {
+      "en": "Patgram",
+      "bn": "Patgram"
+    },
+    {
+      "en": "Lalmonirhat Sadar",
+      "bn": "Lalmonirhat Sadar"
+    },
+    {
+      "en": "Hatibandha",
+      "bn": "Hatibandha"
+    }
+  ],
+  "Moulvibazar": [
+    {
+      "en": "Barlekha",
+      "bn": "Barlekha"
+    },
+    {
+      "en": "Kulaura",
+      "bn": "Kulaura"
+    },
+    {
+      "en": "Rajnagar",
+      "bn": "Rajnagar"
+    },
+    {
+      "en": "Kamalganj",
+      "bn": "Kamalganj"
+    },
+    {
+      "en": "Sreemangal",
+      "bn": "Sreemangal"
+    },
+    {
+      "en": "Moulvibazar Sadar",
+      "bn": "Moulvibazar Sadar"
+    },
+    {
+      "en": "Juri",
+      "bn": "Juri"
+    }
+  ],
+  "Sylhet": [
+    {
+      "en": "Balaganj",
+      "bn": "Balaganj"
+    },
+    {
+      "en": "Biani Bazar",
+      "bn": "Biani Bazar"
+    },
+    {
+      "en": "Bishwanath",
+      "bn": "Bishwanath"
+    },
+    {
+      "en": "Companiganj",
+      "bn": "Companiganj"
+    },
+    {
+      "en": "Fenchuganj",
+      "bn": "Fenchuganj"
+    },
+    {
+      "en": "Golapganj",
+      "bn": "Golapganj"
+    },
+    {
+      "en": "Gowainghat",
+      "bn": "Gowainghat"
+    },
+    {
+      "en": "Jaintiapur",
+      "bn": "Jaintiapur"
+    },
+    {
+      "en": "Kanaighat",
+      "bn": "Kanaighat"
+    },
+    {
+      "en": "Sylhet Sadar",
+      "bn": "Sylhet Sadar"
+    },
+    {
+      "en": "Jakiganj",
+      "bn": "Jakiganj"
+    },
+    {
+      "en": "South Surma",
+      "bn": "South Surma"
+    },
+    {
+      "en": "Osmaninagar",
+      "bn": "Osmaninagar"
+    }
+  ],
+  "Sunamganj": [
+    {
+      "en": "Chhatak",
+      "bn": "Chhatak"
+    },
+    {
+      "en": "Jagannathpur",
+      "bn": "Jagannathpur"
+    },
+    {
+      "en": "Jamalganj",
+      "bn": "Jamalganj"
+    },
+    {
+      "en": "Tahirpur",
+      "bn": "Tahirpur"
+    },
+    {
+      "en": "South Sunamganj",
+      "bn": "South Sunamganj"
+    },
+    {
+      "en": "Derai",
+      "bn": "Derai"
+    },
+    {
+      "en": "Dowarabazar",
+      "bn": "Dowarabazar"
+    },
+    {
+      "en": "Dharmapasha",
+      "bn": "Dharmapasha"
+    },
+    {
+      "en": "Bishwambarpur",
+      "bn": "Bishwambarpur"
+    },
+    {
+      "en": "Shalla",
+      "bn": "Shalla"
+    },
+    {
+      "en": "Sunamganj Sadar",
+      "bn": "Sunamganj Sadar"
+    },
+    {
+      "en": "Madhyanagar",
+      "bn": "Madhyanagar"
+    }
+  ],
+  "Habiganj": [
+    {
+      "en": "Ajmiriganj",
+      "bn": "Ajmiriganj"
+    },
+    {
+      "en": "Chunarughat",
+      "bn": "Chunarughat"
+    },
+    {
+      "en": "Nabiganj",
+      "bn": "Nabiganj"
+    },
+    {
+      "en": "Baniachang",
+      "bn": "Baniachang"
+    },
+    {
+      "en": "Bahubal",
+      "bn": "Bahubal"
+    },
+    {
+      "en": "Madhabpur",
+      "bn": "Madhabpur"
+    },
+    {
+      "en": "Lakhai",
+      "bn": "Lakhai"
+    },
+    {
+      "en": "Shaistaganj",
+      "bn": "Shaistaganj"
+    },
+    {
+      "en": "Habiganj Sadar",
+      "bn": "Habiganj Sadar"
+    }
+  ]
+}

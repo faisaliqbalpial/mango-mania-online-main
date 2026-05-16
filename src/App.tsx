@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages } from "lucide-react";
+import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -170,16 +171,7 @@ const VARIETY_IMG: Record<Variety, string> = {
   himsagor: himsagorImg,
 };
 
-const DISTRICTS = [
-  "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura", "Brahmanbaria", "Chandpur",
-  "Chattogram", "Chuadanga", "Cox's Bazar", "Cumilla", "Dhaka", "Dinajpur", "Faridpur", "Feni",
-  "Gaibandha", "Gazipur", "Gopalganj", "Habiganj", "Jamalpur", "Jashore", "Jhalokati", "Jhenaidah",
-  "Joypurhat", "Khagrachhari", "Khulna", "Kishoreganj", "Kurigram", "Kushtia", "Lakshmipur", "Lalmonirhat",
-  "Madaripur", "Magura", "Manikganj", "Meherpur", "Moulvibazar", "Munshiganj", "Mymensingh", "Naogaon",
-  "Narail", "Narayanganj", "Narsingdi", "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna",
-  "Panchagarh", "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur", "Satkhira",
-  "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", "Tangail", "Thakurgaon"
-];
+const DISTRICTS = Object.keys(UPAZILAS_DATA).sort();
 const DISTRICTS_BN: Record<string, string> = {
   "Bagerhat": "বাগেরহাট", "Bandarban": "বান্দরবান", "Barguna": "বরগুনা", "Barishal": "বরিশাল", "Bhola": "ভোলা", "Bogura": "বগুড়া", "Brahmanbaria": "ব্রাহ্মণবাড়িয়া", "Chandpur": "চাঁদপুর",
   "Chattogram": "চট্টগ্রাম", "Chuadanga": "চুয়াডাঙ্গা", "Cox's Bazar": "কক্সবাজার", "Cumilla": "কুমিল্লা", "Dhaka": "ঢাকা", "Dinajpur": "দিনাজপুর", "Faridpur": "ফরিদপুর", "Feni": "ফেনী",
@@ -204,7 +196,7 @@ function Landing() {
   const [variety, setVariety] = useState<Variety>("himsagor");
   const [pkg, setPkg] = useState<Pkg>("10");
   const [delivery, setDelivery] = useState<Delivery>("courier");
-  const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", address: "" });
+  const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 
   const subtotal = PACKAGE_KG[pkg] * PRICE_PER_KG;
   const shipping = DELIVERY_FEES[delivery][pkg];
@@ -213,7 +205,7 @@ function Landing() {
 
   const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent) => {
-    if (!form.name || !form.mobile || !form.area || !form.address) {
+    if (!form.name || !form.mobile || !form.area || !form.upazila || !form.address) {
       e.preventDefault();
       toast.error(t.fillAll);
       return;
@@ -369,7 +361,8 @@ function Landing() {
                   <input type="hidden" name="Name" value={form.name} />
                   <input type="hidden" name="Mobile" value={form.mobile} />
                   <input type="hidden" name="Email" value={form.email || "No email provided"} />
-                  <input type="hidden" name="Area" value={form.area} />
+                  <input type="hidden" name="District" value={form.area} />
+                  <input type="hidden" name="Upazila" value={form.upazila} />
                   <input type="hidden" name="Address" value={form.address} />
                   <input type="hidden" name="Variety" value={t.varieties[variety].name} />
                   <input type="hidden" name="Package_KG" value={pkg} />
@@ -381,16 +374,19 @@ function Landing() {
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field label={t.mobile} required icon={<span className="text-base">🇧🇩</span>}
                       prefix="+880" placeholder="1XXXXXXXXX" value={form.mobile}
+                      pattern="^(?:\+8801|01|1)[3-9]\d{8}$" title="Please enter a valid Bangladeshi mobile number"
+                      type="tel"
                       onChange={(v) => setForm({ ...form, mobile: v })} />
                     <Field label={t.email} optional optionalLabel={t.optional}
+                      type="email"
                       icon={<Mail className="h-4 w-4" />} placeholder="you@example.com"
                       value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-semibold">
-                      {t.area} <span className="text-destructive">*</span>
+                      {t.area} (District) <span className="text-destructive">*</span>
                     </Label>
-                    <Select value={form.area} onValueChange={(v) => setForm({ ...form, area: v })}>
+                    <Select required value={form.area} onValueChange={(v) => setForm({ ...form, area: v, upazila: "" })}>
                       <SelectTrigger className="h-11">
                         <SelectValue placeholder={t.selectDistrict} />
                       </SelectTrigger>
@@ -403,6 +399,26 @@ function Landing() {
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  {form.area && UPAZILAS_DATA[form.area as keyof typeof UPAZILAS_DATA] && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold">
+                        Upazila / Thana <span className="text-destructive">*</span>
+                      </Label>
+                      <Select required value={form.upazila} onValueChange={(v) => setForm({ ...form, upazila: v })}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Select Upazila/Thana" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {UPAZILAS_DATA[form.area as keyof typeof UPAZILAS_DATA].map((u: any) => (
+                            <SelectItem key={u.en} value={u.en}>
+                              {lang === "bn" ? u.bn : u.en}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label className="text-sm font-semibold">
                       {t.address} <span className="text-destructive">*</span>
