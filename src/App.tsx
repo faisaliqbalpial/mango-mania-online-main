@@ -201,49 +201,11 @@ function Landing() {
   const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
 
   const navigate = useNavigate();
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e: React.FormEvent) => {
     if (!form.name || !form.mobile || !form.area || !form.address) {
+      e.preventDefault();
       toast.error(t.fillAll);
       return;
-    }
-    
-    try {
-      toast.loading("Submitting order...", { id: "submit-toast" });
-      const res = await fetch("https://formsubmit.co/ajax/contact@ammerbari.com", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: form.name,
-          mobile: form.mobile,
-          email: form.email || "No email provided",
-          area: form.area,
-          address: form.address,
-          variety: t.varieties[variety].name,
-          package_kg: pkg,
-          total_price: total.toString(),
-          order_reference: orderRef,
-          _subject: `New Pre-Order from ${form.name}`,
-          _captcha: "false"
-        })
-      });
-      
-      const data = await res.json();
-      
-      toast.dismiss("submit-toast");
-      if (res.ok) {
-        navigate('/thank-you');
-      } else {
-        console.error("FormSubmit Error:", data);
-        toast.error(data.message || "Failed to submit order. Please try again.");
-      }
-    } catch (error) {
-      console.error("Fetch Error:", error);
-      toast.dismiss("submit-toast");
-      toast.error("Network error. Please check your connection or turn off ad-blocker.");
     }
   };
 
