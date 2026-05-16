@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages } from "lucide-react";
@@ -19,25 +18,6 @@ import heroImg from "@/assets/Real mango pic.webp";
 import nengraImg from "@/assets/nengra.jpg";
 import amropaliImg from "@/assets/amropali.jpg";
 import himsagorImg from "@/assets/himsagor.jpg";
-
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "আমের বাড়ি (Amerbari) — রাজশাহীর তাজা আম অর্ডার করুন" },
-      {
-        name: "description",
-        content:
-          "আমের বাড়ি (Amerbari) থেকে অর্ডার করুন ১০০% তাজা ন্যাংড়া, আম্রপালি ও খিরসাপাত/হিমসাগর আম। ১০ কেজি, ২০ কেজি ও ৪০ কেজি প্যাকেজ। সারা বাংলাদেশে ডেলিভারি।",
-      },
-      { property: "og:title", content: "আমের বাড়ি (Amerbari) — Mango Business" },
-      {
-        property: "og:description",
-        content: "রাজশাহীর আম, সবার প্রিয় নাম। Order fresh Rajshahi mangoes online.",
-      },
-    ],
-  }),
-  component: Landing,
-});
 
 type Lang = "bn" | "en";
 type Variety = "nengra" | "amropali" | "himsagor";
@@ -206,7 +186,7 @@ const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
   home: { "10": 350, "20": 450, "40": 700 },
 };
 
-function Landing() {
+export default function App() {
   const [lang, setLang] = useState<Lang>("bn");
   const t = T[lang];
   const [variety, setVariety] = useState<Variety>("himsagor");
