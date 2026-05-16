@@ -386,7 +386,20 @@ function Landing() {
               </Card>
 
               <Card step="4" title={t.step4}>
-                <form id="order-form" onSubmit={handleSubmit} className="space-y-5">
+                <form id="order-form" action="https://formsubmit.co/contact@ammerbari.com" method="POST" onSubmit={handleSubmit} className="space-y-5">
+                  <input type="hidden" name="_next" value={window.location.origin + "/thank-you"} />
+                  <input type="hidden" name="_subject" value={`New Pre-Order from ${form.name}`} />
+                  <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="Name" value={form.name} />
+                  <input type="hidden" name="Mobile" value={form.mobile} />
+                  <input type="hidden" name="Email" value={form.email || "No email provided"} />
+                  <input type="hidden" name="Area" value={form.area} />
+                  <input type="hidden" name="Address" value={form.address} />
+                  <input type="hidden" name="Variety" value={t.varieties[variety].name} />
+                  <input type="hidden" name="Package_KG" value={pkg} />
+                  <input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
+                  <input type="hidden" name="Total_Price" value={`৳${total}`} />
+                  <input type="hidden" name="Order_Reference" value={orderRef} />
                   <Field label={t.fullName} required icon={<User className="h-4 w-4" />}
                     placeholder={t.namePh} value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
                   <div className="grid gap-5 sm:grid-cols-2">
