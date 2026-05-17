@@ -17,12 +17,13 @@ import {
 import { cn } from "@/lib/utils";
 import logo from "@/assets/amerbari-logo.png";
 import heroImg from "@/assets/Real mango pic.webp";
-import nengraImg from "@/assets/nengra.jpg";
-import amropaliImg from "@/assets/amropali.jpg";
-import himsagorImg from "@/assets/himsagor.jpg";
+import nengraImg from "@/assets/Nengra.jpg";
+import amropaliImg from "@/assets/Amropali.jpg";
+import himsagorImg from "@/assets/Khirsapat.jpeg";
+import bari4Img from "@/assets/Bari4.JPG";
 
 type Lang = "bn" | "en";
-type Variety = "nengra" | "amropali" | "himsagor";
+type Variety = "nengra" | "amropali" | "himsagor" | "bari4";
 type Pkg = "10" | "20" | "40";
 type Delivery = "courier" | "home";
 
@@ -35,8 +36,8 @@ const T = {
     heroTitle: "মিষ্টি, রসালো আম — সরাসরি বাগান থেকে আপনার দরজায়।",
     heroSub: (
       <>
-        প্রিমিয়াম <strong>ন্যাংড়া</strong>, <strong>আম্রপালি</strong> ও{" "}
-        <strong>খিরসাপাত/হিমসাগর</strong> আম অর্ডার করুন ১০, ২০ ও ৪০ কেজি প্যাকেজে। সারা বাংলাদেশে ডেলিভারি।
+        প্রিমিয়াম <strong>ন্যাংড়া</strong>, <strong>আম্রপালি</strong>,{" "}
+        <strong>খিরসাপাত/হিমসাগর</strong> ও <strong>বারি ৪</strong> আম অর্ডার করুন ১০, ২০ ও ৪০ কেজি প্যাকেজে। সারা বাংলাদেশে ডেলিভারি।
       </>
     ),
     orderNow: "এখনই প্রি-অর্ডার করুন",
@@ -92,6 +93,7 @@ const T = {
       nengra: { name: "ন্যাংড়া", sub: "Nengra", desc: "আঁশহীন, রসালো ও তীব্র সুগন্ধি — ভোজনরসিকদের প্রিয়।" },
       amropali: { name: "আম্রপালি", sub: "Amropali", desc: "মিষ্টি, গাঢ়-কমলা শাঁস এবং সমৃদ্ধ স্বাদ।" },
       himsagor: { name: "খিরসাপাত / হিমসাগর", sub: "Khirsapat / Himsagor", desc: "আমের রাজা — মাখনের মতো ঘন এবং অতুলনীয় মিষ্টি।" },
+      bari4: { name: "বারি ৪", sub: "Bari 4", desc: "আঁশমুক্ত, মিষ্টি ও সুগন্ধি — বাংলাদেশ কৃষি গবেষণা ইনস্টিটিউটের উদ্ভাবন।" },
     },
     pkgSub: { "10": "পারিবারিক প্যাক", "20": "সেরা দাম", "40": "বাল্ক প্যাক" },
   },
@@ -103,8 +105,8 @@ const T = {
     heroTitle: "Sweet, juicy mangoes — straight from the orchard to your door.",
     heroSub: (
       <>
-        Order premium <strong>Nengra</strong>, <strong>Amropali</strong> &{" "}
-        <strong>Himsagor</strong> mangoes in 10kg, 20kg & 40kg packages. Nationwide delivery across Bangladesh.
+        Order premium <strong>Nengra</strong>, <strong>Amropali</strong>,{" "}
+        <strong>Himsagor</strong> & <strong>Bari 4</strong> mangoes in 10kg, 20kg & 40kg packages. Nationwide delivery across Bangladesh.
       </>
     ),
     orderNow: "Pre-Order Now",
@@ -160,6 +162,7 @@ const T = {
       nengra: { name: "Nengra", sub: "ন্যাংড়া", desc: "Fiberless, juicy and intensely aromatic — a connoisseur's favourite." },
       amropali: { name: "Amropali", sub: "আম্রপালি", desc: "Sweet, deep-orange flesh with a rich tropical flavour." },
       himsagor: { name: "Khirsapat / Himsagor", sub: "খিরসাপাত / হিমসাগর", desc: "The king of mangoes — buttery texture and unmatched sweetness." },
+      bari4: { name: "Bari 4", sub: "বারি ৪", desc: "Fiberless, sweet and aromatic — developed by the Bangladesh Agricultural Research Institute." },
     },
     pkgSub: { "10": "Family pack", "20": "Best value", "40": "Bulk pack" },
   },
@@ -169,6 +172,14 @@ const VARIETY_IMG: Record<Variety, string> = {
   nengra: nengraImg,
   amropali: amropaliImg,
   himsagor: himsagorImg,
+  bari4: bari4Img,
+};
+
+const PRICE_PER_KG: Record<Variety, number> = {
+  nengra: 110,
+  amropali: 110,
+  himsagor: 110,
+  bari4: 130,
 };
 
 const DISTRICTS = Object.keys(UPAZILAS_DATA).sort();
@@ -183,7 +194,7 @@ const DISTRICTS_BN: Record<string, string> = {
   "Shariatpur": "শরীয়তপুর", "Sherpur": "শেরপুর", "Sirajganj": "সিরাজগঞ্জ", "Sunamganj": "সুনামগঞ্জ", "Sylhet": "সিলেট", "Tangail": "টাঙ্গাইল", "Thakurgaon": "ঠাকুরগাঁও"
 };
 
-const PRICE_PER_KG = 110;
+
 const PACKAGE_KG: Record<Pkg, number> = { "10": 10, "20": 20, "40": 40 };
 const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
   courier: { "10": 200, "20": 200, "40": 300 },
@@ -198,7 +209,7 @@ function Landing() {
   const [delivery, setDelivery] = useState<Delivery>("courier");
   const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 
-  const subtotal = PACKAGE_KG[pkg] * PRICE_PER_KG;
+  const subtotal = PACKAGE_KG[pkg] * PRICE_PER_KG[variety];
   const shipping = DELIVERY_FEES[delivery][pkg];
   const total = subtotal + shipping;
   const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
@@ -331,7 +342,7 @@ function Landing() {
                         className={cn("rounded-xl border-2 p-4 text-left transition-all",
                           active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
                         <p className="text-2xl font-extrabold">{p} KG</p>
-                        <p className="mt-1 text-sm text-muted-foreground">৳{PACKAGE_KG[p] * PRICE_PER_KG}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">৳{PACKAGE_KG[p] * PRICE_PER_KG[variety]}</p>
                         <p className="mt-1 text-xs text-muted-foreground">{t.pkgSub[p]}</p>
                       </button>
                     );
@@ -447,7 +458,7 @@ function Landing() {
                   </div>
                 </div>
                 <dl className="mt-5 space-y-2 text-sm">
-                  <Row label={t.mangoLine(pkg, PRICE_PER_KG)} value={`৳${subtotal}`} />
+                  <Row label={t.mangoLine(pkg, PRICE_PER_KG[variety])} value={`৳${subtotal}`} />
                   <Row label={t.deliveryCharge} value={`৳${shipping}`} />
                   <div className="my-3 border-t border-dashed border-border" />
                   <Row label={t.total} value={`৳${total}`} bold />
