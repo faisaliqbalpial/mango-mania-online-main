@@ -17,8 +17,8 @@ import {
 import { cn } from "@/lib/utils";
 import logo from "@/assets/amerbari-logo.png";
 import heroImg from "@/assets/Real mango pic.webp";
-import nengraImg from "@/assets/Nengra.jpg";
-import amropaliImg from "@/assets/Amropali.jpg";
+import nengraImg from "@/assets/nengra.jpg";
+import amropaliImg from "@/assets/amropali.jpg";
 import himsagorImg from "@/assets/Khirsapat.jpeg";
 import bari4Img from "@/assets/Bari4.JPG";
 
