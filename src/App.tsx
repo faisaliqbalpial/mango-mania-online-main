@@ -19,8 +19,8 @@ import logo from "@/assets/amerbari-logo.png";
 import heroImg from "@/assets/Real mango pic.webp";
 import nengraImg from "@/assets/nengra.jpg";
 import amropaliImg from "@/assets/amropali.jpg";
-import himsagorImg from "@/assets/Khirsapat.jpeg";
-import bari4Img from "@/assets/Bari4.JPG";
+import himsagorImg from "@/assets/khirsapat.jpg";
+import bari4Img from "@/assets/bari4.jpg";
 
 type Lang = "bn" | "en";
 type Variety = "nengra" | "amropali" | "himsagor" | "bari4";

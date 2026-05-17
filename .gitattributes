@@ -1,0 +1,12 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Treat all image/media files strictly as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.JPG binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
