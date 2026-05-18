@@ -416,7 +416,7 @@ placeholder={t.namePh} value={form.name} onChange={(v) => setForm({ ...form, nam
       inputMode="numeric"
       maxLength={11}
       pattern="\d{11}"
-      title={lang === "bn" ? "মোবাইল নম্বর ১১ সংখ্যার হতে হবে (শুধুমাত্র সংখ্যা)" : "Mobile number must be exactly 11 digits (numbers only)"}
+      title={lang === "bn" ? "মোবাইল নম্বর ১১ সংখ্যার হতে হবে" : "Mobile number must be exactly 11 digits (numbers only)"}
       hasError={!!mobileError}
       onChange={handleMobileChange}
     />
