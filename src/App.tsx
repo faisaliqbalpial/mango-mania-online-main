@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
-import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages } from "lucide-react";
+import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +31,7 @@ const T = {
 bn: {
 brand: "আমের বাড়ি",
 tagline: "রাজশাহীর আম, সবার প্রিয় নাম",
-callUs: "+৮৮০ ১XXX-XXXXXX",
+callUs: "+৮৮০ ১৮১৬৫১০১১৭",
 fresh: "১০০% বাগানের তাজা",
 heroTitle: "মিষ্টি, রসালো আম — সরাসরি বাগান থেকে আপনার দরজায়।",
 heroSub: (
@@ -90,6 +90,7 @@ fillAll: "অনুগ্রহ করে সব আবশ্যক ঘর প�
 ordered: (ref: string) => `প্রি-অর্ডার সম্পন্ন! রেফারেন্স: ${ref}`,
 footerTag: "ভালোবাসায় পৌঁছে দেই বাগানের তাজা আম।",
 location: "রাজশাহী, বাংলাদেশ",
+fbLink: "ফেসবুকে আমাদের ফলো করুন",
 varieties: {
 nengra: { name: "ন্যাংড়া", sub: "Nengra", desc: "আঁশহীন, রসালো ও তীব্র সুগন্ধি — ভোজনরসিকদের প্রিয়।" },
 amropali: { name: "আম্রপালি", sub: "Amropali", desc: "মিষ্টি, গাঢ়-কমলা শাঁস এবং সমৃদ্ধ স্বাদ।" },
@@ -101,7 +102,7 @@ pkgSub: { "10": "পারিবারিক প্যাক", "20": "সের�
 en: {
 brand: "Amerbari",
 tagline: "Rajshahi mangoes everyone loves",
-callUs: "+880 1XXX-XXXXXX",
+callUs: "+880 1816510117",
 fresh: "100% Garden Fresh",
 heroTitle: "Sweet, juicy mangoes — straight from the orchard to your door.",
 heroSub: (
@@ -160,6 +161,7 @@ fillAll: "Please fill in all required fields.",
 ordered: (ref: string) => `Pre-order placed! Reference: ${ref}`,
 footerTag: "Garden-fresh mangoes, delivered with love.",
 location: "Rajshahi, Bangladesh",
+fbLink: "Follow us on Facebook",
 varieties: {
 nengra: { name: "Nengra", sub: "ন্যাংড়া", desc: "Fiberless, juicy and intensely aromatic — a connoisseur's favourite." },
 amropali: { name: "Amropali", sub: "আম্রপালি", desc: "Sweet, deep-orange flesh with a rich tropical flavour." },
@@ -271,7 +273,7 @@ aria-label="Switch language"
 {lang === "bn" ? "EN" : "বাং"}
 </button>
 <a
-href="tel:+8801XXXXXXXXX"
+href="tel:+8801816510117"
 className="hidden items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground sm:inline-flex"
 >
 <Phone className="h-4 w-4" /> {t.callUs}
@@ -542,7 +544,13 @@ className="h-14 w-14 rounded-lg object-cover" />
 <p className="font-semibold text-foreground">{t.brand}</p>
 </div>
 <p className="mt-1">{t.footerTag}</p>
-<p className="mt-1 text-xs">📍 {t.location} • © {new Date().getFullYear()}</p>
+<div className="mt-4 flex justify-center">
+<a href="https://www.facebook.com/ammerbari.bd" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+<Facebook className="h-5 w-5 text-[#1877F2]" />
+<span className="text-sm font-medium">{t.fbLink}</span>
+</a>
+</div>
+<p className="mt-4 text-xs">📍 {t.location} • © {new Date().getFullYear()}</p>
 </div>
 </footer>
 </div>
