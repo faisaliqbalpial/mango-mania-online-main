@@ -207,13 +207,14 @@ home: { "10": 350, "20": 450, "40": 700 },
 function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
-const [variety, setVariety] = useState<Variety>("himsagor");
+const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>(["himsagor"]);
 const [pkgs, setPkgs] = useState<Pkg[]>(["10"]);
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
 
-const subtotal = pkgs.reduce((sum, p) => sum + PACKAGE_KG[p] * PRICE_PER_KG[variety], 0);
+const subtotal = selectedVarieties.reduce((vSum, v) =>
+  vSum + pkgs.reduce((pSum, p) => pSum + PACKAGE_KG[p] * PRICE_PER_KG[v], 0), 0);
 const shipping = pkgs.reduce((sum, p) => sum + DELIVERY_FEES[delivery][p], 0);
 const total = subtotal + shipping;
 const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
@@ -332,9 +333,15 @@ className="relative rounded-3xl object-cover shadow-[var(--shadow-soft)]" />
 <div className="grid gap-4 sm:grid-cols-3">
 {(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
 const v = t.varieties[key];
-const active = variety === key;
+const active = selectedVarieties.includes(key);
 return (
-<button type="button" key={key} onClick={() => setVariety(key)}
+<button type="button" key={key} onClick={() => {
+if (selectedVarieties.includes(key)) {
+if (selectedVarieties.length > 1) setSelectedVarieties(selectedVarieties.filter((sv) => sv !== key));
+} else {
+setSelectedVarieties([...selectedVarieties, key]);
+}
+}}
 className={cn("group relative overflow-hidden rounded-xl border-2 bg-card p-3 text-left transition-all",
 active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40")}>
 <div className="aspect-square overflow-hidden rounded-lg">
@@ -372,7 +379,7 @@ setPkgs([...pkgs, p]);
 className={cn("rounded-xl border-2 p-4 text-left transition-all",
 active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
 <p className="text-2xl font-extrabold">{p} KG</p>
-<p className="mt-1 text-sm text-muted-foreground">৳{PACKAGE_KG[p] * PRICE_PER_KG[variety]}</p>
+<p className="mt-1 text-sm text-muted-foreground">৳{selectedVarieties.reduce((s, v) => s + PACKAGE_KG[p] * PRICE_PER_KG[v], 0)} total</p>
 <p className="mt-1 text-xs text-muted-foreground">{t.pkgSub[p]}</p>
 </button>
 );
@@ -405,7 +412,7 @@ sub={t.courierFee(pkgs.reduce((sum, p) => sum + DELIVERY_FEES.home[p], 0))} note
 <input type="hidden" name="District" value={form.area} />
 <input type="hidden" name="Upazila" value={form.upazila} />
 <input type="hidden" name="Address" value={form.address} />
-<input type="hidden" name="Variety" value={t.varieties[variety].name} />
+<input type="hidden" name="Varieties" value={selectedVarieties.map(v => t.varieties[v].name).join(", ")} />
 <input type="hidden" name="Packages" value={pkgs.map(p => p + " KG").join(", ")} />
 <input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
 <input type="hidden" name="Total_Price" value={`৳${total}`} />
@@ -491,20 +498,24 @@ value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value
 <aside className="lg:sticky lg:top-6 lg:self-start">
 <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
 <h3 className="text-lg font-bold">{t.summary}</h3>
-<div className="mt-4 flex items-center gap-3 rounded-xl bg-accent/40 p-3">
-<img src={VARIETY_IMG[variety]} alt={t.varieties[variety].name} loading="lazy"
-className="h-14 w-14 rounded-lg object-cover" />
-<div className="flex-1">
-<p className="text-sm font-bold">{t.varieties[variety].name}</p>
+<div className="mt-4 flex items-center gap-2 flex-wrap rounded-xl bg-accent/40 p-3">
+{selectedVarieties.map(v => (
+<img key={v} src={VARIETY_IMG[v]} alt={t.varieties[v].name} loading="lazy" title={t.varieties[v].name}
+className="h-12 w-12 rounded-lg object-cover ring-2 ring-primary" />
+))}
+<div className="flex-1 min-w-0">
+<p className="text-sm font-bold">{selectedVarieties.map(v => t.varieties[v].name).join(", ")}</p>
 <p className="text-xs text-muted-foreground">
 {pkgs.join(" KG, ")} KG • {delivery === "home" ? t.home : t.courier}
 </p>
 </div>
 </div>
 <dl className="mt-5 space-y-2 text-sm">
-{pkgs.map(p => (
-<Row key={p} label={t.mangoLine(p, PRICE_PER_KG[variety])} value={`৳${PACKAGE_KG[p] * PRICE_PER_KG[variety]}`} />
-))}
+{selectedVarieties.flatMap(v =>
+  pkgs.map(p => (
+    <Row key={`${v}-${p}`} label={`${t.varieties[v].name} (${p}kg × ৳${PRICE_PER_KG[v]})`} value={`৳${PACKAGE_KG[p] * PRICE_PER_KG[v]}`} />
+  ))
+)}
 <Row label={t.deliveryCharge} value={`৳${shipping}`} />
 <div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
