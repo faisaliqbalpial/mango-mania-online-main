@@ -31,7 +31,7 @@ const T = {
 bn: {
 brand: "আমের বাড়ি",
 tagline: "রাজশাহীর আম, সবার প্রিয় নাম",
-callUs: "+৮৮০ ১৮১৬৫১০১১৭",
+callUs: "01816510117",
 fresh: "১০০% বাগানের তাজা",
 heroTitle: "মিষ্টি, রসালো আম — সরাসরি বাগান থেকে আপনার দরজায়।",
 heroSub: (
@@ -208,13 +208,13 @@ function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
 const [variety, setVariety] = useState<Variety>("himsagor");
-const [pkg, setPkg] = useState<Pkg>("10");
+const [pkgs, setPkgs] = useState<Pkg[]>(["10"]);
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
 
-const subtotal = PACKAGE_KG[pkg] * PRICE_PER_KG[variety];
-const shipping = DELIVERY_FEES[delivery][pkg];
+const subtotal = pkgs.reduce((sum, p) => sum + PACKAGE_KG[p] * PRICE_PER_KG[variety], 0);
+const shipping = pkgs.reduce((sum, p) => sum + DELIVERY_FEES[delivery][p], 0);
 const total = subtotal + shipping;
 const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
 
@@ -360,9 +360,15 @@ className="h-full w-full object-cover transition-transform group-hover:scale-105
 <Card step="2" title={t.step2}>
 <div className="grid gap-3 sm:grid-cols-3">
 {(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
-const active = pkg === p;
+const active = pkgs.includes(p);
 return (
-<button type="button" key={p} onClick={() => setPkg(p)}
+<button type="button" key={p} onClick={() => {
+if (pkgs.includes(p)) {
+if (pkgs.length > 1) setPkgs(pkgs.filter((pkg) => pkg !== p));
+} else {
+setPkgs([...pkgs, p]);
+}
+}}
 className={cn("rounded-xl border-2 p-4 text-left transition-all",
 active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
 <p className="text-2xl font-extrabold">{p} KG</p>
@@ -378,10 +384,10 @@ active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-pri
 <div className="grid gap-3 sm:grid-cols-2">
 <DeliveryOption active={delivery === "courier"} onClick={() => setDelivery("courier")}
 icon={<Truck className="h-5 w-5" />} title={t.courier}
-sub={t.courierFee(DELIVERY_FEES.courier[pkg])} note={t.courierNote} />
+sub={t.courierFee(pkgs.reduce((sum, p) => sum + DELIVERY_FEES.courier[p], 0))} note={t.courierNote} />
 <DeliveryOption active={delivery === "home"} onClick={() => setDelivery("home")}
 icon={<Home className="h-5 w-5" />} title={t.home}
-sub={t.courierFee(DELIVERY_FEES.home[pkg])} note={t.homeNote} />
+sub={t.courierFee(pkgs.reduce((sum, p) => sum + DELIVERY_FEES.home[p], 0))} note={t.homeNote} />
 </div>
 </Card>
 
@@ -400,7 +406,7 @@ sub={t.courierFee(DELIVERY_FEES.home[pkg])} note={t.homeNote} />
 <input type="hidden" name="Upazila" value={form.upazila} />
 <input type="hidden" name="Address" value={form.address} />
 <input type="hidden" name="Variety" value={t.varieties[variety].name} />
-<input type="hidden" name="Package_KG" value={pkg} />
+<input type="hidden" name="Packages" value={pkgs.map(p => p + " KG").join(", ")} />
 <input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
 <input type="hidden" name="Total_Price" value={`৳${total}`} />
 <input type="hidden" name="Order_Reference" value={orderRef} />
@@ -491,12 +497,14 @@ className="h-14 w-14 rounded-lg object-cover" />
 <div className="flex-1">
 <p className="text-sm font-bold">{t.varieties[variety].name}</p>
 <p className="text-xs text-muted-foreground">
-{pkg} KG • {delivery === "home" ? t.home : t.courier}
+{pkgs.join(" KG, ")} KG • {delivery === "home" ? t.home : t.courier}
 </p>
 </div>
 </div>
 <dl className="mt-5 space-y-2 text-sm">
-<Row label={t.mangoLine(pkg, PRICE_PER_KG[variety])} value={`৳${subtotal}`} />
+{pkgs.map(p => (
+<Row key={p} label={t.mangoLine(p, PRICE_PER_KG[variety])} value={`৳${PACKAGE_KG[p] * PRICE_PER_KG[variety]}`} />
+))}
 <Row label={t.deliveryCharge} value={`৳${shipping}`} />
 <div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
@@ -673,3 +681,4 @@ return (
 </Routes>
 );
 }
+
