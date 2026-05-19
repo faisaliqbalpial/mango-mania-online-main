@@ -31,7 +31,7 @@ const T = {
 bn: {
 brand: "আমের বাড়ি",
 tagline: "রাজশাহীর আম, সবার প্রিয় নাম",
-callUs: "01816510117",
+callUs: "01970163903",
 fresh: "১০০% বাগানের তাজা",
 heroTitle: "মিষ্টি, রসালো আম — সরাসরি বাগান থেকে আপনার দরজায়।",
 heroSub: (
@@ -274,7 +274,7 @@ aria-label="Switch language"
 {lang === "bn" ? "EN" : "বাং"}
 </button>
 <a
-href="tel:+8801816510117"
+href="tel:+8801970163903"
 className="hidden items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground sm:inline-flex"
 >
 <Phone className="h-4 w-4" /> {t.callUs}
