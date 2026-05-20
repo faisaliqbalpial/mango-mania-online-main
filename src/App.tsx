@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { toast, Toaster } from "sonner";
-import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook } from "lucide-react";
+import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,6 @@ SelectTrigger,
 SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/amerbari-logo.png";
 import heroImg from "@/assets/Real mango pic.webp";
 import nengraImg from "@/assets/nengra.jpg";
 import amropaliImg from "@/assets/amropali.jpg";
@@ -28,6 +27,14 @@ type Pkg = "10" | "20" | "40";
 type Delivery = "courier" | "home";
 
 type VarietyLine = { pkg: Pkg; qty: number };
+type VarietyLayout = "grid" | "list";
+
+const DEFAULT_VARIETY_LINES: Record<Variety, VarietyLine> = {
+  nengra: { pkg: "10", qty: 1 },
+  amropali: { pkg: "10", qty: 1 },
+  himsagor: { pkg: "10", qty: 1 },
+  bari4: { pkg: "10", qty: 1 },
+};
 
 function clampQty(q: number): number {
   if (!Number.isFinite(q)) return 1;
@@ -62,6 +69,9 @@ why: [
 placeOrder: "প্রি-অর্ডার করুন",
 placeOrderSub: "আম বাছাই করুন, প্যাকেজ ও পরিমাণ নির্বাচন করুন, ডেলিভারির ঠিকানা দিন।",
 step1: "আমের জাত নির্বাচন করুন",
+varietyLayoutGrid: "গ্রিড",
+varietyLayoutList: "তালিকা",
+varietyLayoutAria: "পণ্যের দেখার ধরন",
 step2: "ডেলিভারি পদ্ধতি",
 step3: "ডেলিভারির তথ্য",
 familyPack: "পারিবারিক প্যাক",
@@ -133,6 +143,9 @@ why: [
 placeOrder: "Place your pre-order",
 placeOrderSub: "Choose your mango, package size & quantity, and tell us where to deliver.",
 step1: "Select Mango Variety",
+varietyLayoutGrid: "Grid",
+varietyLayoutList: "List",
+varietyLayoutAria: "Product layout",
 step2: "Delivery Method",
 step3: "Delivery Details",
 familyPack: "Family pack",
@@ -215,9 +228,8 @@ function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
 const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>(["himsagor"]);
-const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>({
-  himsagor: { pkg: "10", qty: 1 },
-});
+const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>(() => ({ ...DEFAULT_VARIETY_LINES }));
+const [varietyLayout, setVarietyLayout] = useState<VarietyLayout>("grid");
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
@@ -288,7 +300,7 @@ return (
 <header className="border-b border-border bg-card">
 <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
 <div className="flex items-center gap-3">
-<img src={logo} alt={`${t.brand} logo`} className="h-12 w-12 rounded-lg object-contain" />
+<img src="/amerbari-logo.png" alt={`${t.brand} logo`} className="h-12 w-12 rounded-lg object-contain" />
 <div>
 <p className="text-sm font-bold leading-tight">{t.brand}</p>
 <p className="text-xs text-muted-foreground leading-tight">{t.tagline}</p>
@@ -359,19 +371,60 @@ className="relative rounded-3xl object-cover shadow-[var(--shadow-soft)]" />
 
 <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_380px]">
 <div className="space-y-8">
-<Card step="1" title={t.step1}>
-<div className="grid gap-4 sm:grid-cols-3">
+<Card
+step="1"
+title={t.step1}
+action={
+<div
+className="inline-flex shrink-0 rounded-lg border border-border bg-background p-0.5"
+role="group"
+aria-label={t.varietyLayoutAria}
+>
+<button
+type="button"
+onClick={() => setVarietyLayout("grid")}
+className={cn(
+"inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
+varietyLayout === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+)}
+aria-pressed={varietyLayout === "grid"}
+>
+<LayoutGrid className="h-3.5 w-3.5" />
+{t.varietyLayoutGrid}
+</button>
+<button
+type="button"
+onClick={() => setVarietyLayout("list")}
+className={cn(
+"inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
+varietyLayout === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+)}
+aria-pressed={varietyLayout === "list"}
+>
+<List className="h-3.5 w-3.5" />
+{t.varietyLayoutList}
+</button>
+</div>
+}
+>
+<div
+className={cn(
+varietyLayout === "grid" ? "grid gap-4 sm:grid-cols-3" : "flex flex-col gap-4"
+)}
+>
 {(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
 const v = t.varieties[key];
 const active = selectedVarieties.includes(key);
-const line = varietyLines[key] ?? { pkg: "10" as Pkg, qty: 1 };
+const line = varietyLines[key];
 const q = clampQty(line.qty);
+const isList = varietyLayout === "list";
 return (
 <div
 key={key}
 className={cn(
 "group relative overflow-hidden rounded-xl border-2 bg-card transition-all",
-active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40"
+active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40",
+isList && "flex flex-col sm:flex-row sm:items-stretch"
 )}
 >
 <button
@@ -380,40 +433,46 @@ onClick={() => {
 if (selectedVarieties.includes(key)) {
 if (selectedVarieties.length > 1) {
 setSelectedVarieties(selectedVarieties.filter((sv) => sv !== key));
-setVarietyLines((prev) => {
-const next = { ...prev };
-delete next[key];
-return next;
-});
 }
 } else {
 setSelectedVarieties([...selectedVarieties, key]);
-setVarietyLines((prev) => ({
-...prev,
-[key]: prev[key] ?? { pkg: "10", qty: 1 },
-}));
 }
 }}
-className="relative w-full p-3 text-left"
+className={cn(
+"relative text-left",
+isList ? "flex flex-1 gap-3 p-3 sm:min-w-0 sm:items-center" : "w-full p-3"
+)}
 >
-<div className="aspect-square overflow-hidden rounded-lg">
+<div
+className={cn(
+"overflow-hidden rounded-lg shrink-0",
+isList ? "h-24 w-24 sm:h-28 sm:w-28" : "aspect-square w-full"
+)}
+>
 <img src={VARIETY_IMG[key]} alt={v.name} loading="lazy"
 className="h-full w-full object-cover transition-transform group-hover:scale-105" />
 </div>
-<div className="mt-3">
+<div className={cn(isList ? "min-w-0 flex-1 pt-0" : "mt-3")}>
 <p className="text-sm font-bold">{v.name}</p>
 <p className="text-xs text-muted-foreground">{v.sub}</p>
 <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{v.desc}</p>
 </div>
-{active && (
-<span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
-<Check className="h-3.5 w-3.5" />
-</span>
-)}
 </button>
 
 {active && (
-<div className="space-y-3 border-t border-border px-3 pb-3 pt-3">
+<span className="pointer-events-none absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+<Check className="h-3.5 w-3.5" />
+</span>
+)}
+
+<div
+className={cn(
+"space-y-3 px-3 pb-3",
+isList
+? "border-t border-border pt-3 sm:flex sm:w-64 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:py-3 sm:pr-3 sm:pl-4"
+: "border-t border-border pt-3"
+)}
+>
 <div className="grid grid-cols-3 gap-2">
 {(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
 const pkgActive = line.pkg === p;
@@ -477,7 +536,6 @@ aria-label="Increase quantity"
 </div>
 </div>
 </div>
-)}
 </div>
 );
 })}
@@ -668,7 +726,7 @@ value={`৳${lineSub}`}
 <footer className="border-t border-border bg-card py-8">
 <div className="mx-auto max-w-6xl px-4 text-center text-sm text-muted-foreground">
 <div className="flex items-center justify-center gap-2">
-<img src={logo} alt="" className="h-8 w-8 object-contain" />
+<img src="/amerbari-logo.png" alt="" className="h-8 w-8 object-contain" />
 <p className="font-semibold text-foreground">{t.brand}</p>
 </div>
 <p className="mt-1">{t.footerTag}</p>
@@ -685,14 +743,17 @@ value={`৳${lineSub}`}
 );
 }
 
-function Card({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
+function Card({ step, title, children, action }: { step: string; title: string; children: React.ReactNode; action?: React.ReactNode }) {
 return (
 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-<div className="mb-5 flex items-center gap-3 border-b border-border pb-4">
-<span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-primary-foreground">
+<div className="mb-5 flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+<div className="flex min-w-0 items-center gap-3">
+<span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-base font-bold text-primary-foreground">
 {step}
 </span>
 <h3 className="text-xl font-extrabold tracking-tight">{title}</h3>
+</div>
+{action}
 </div>
 {children}
 </div>
