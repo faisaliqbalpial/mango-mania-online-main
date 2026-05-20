@@ -153,4 +153,8 @@
   body {
     background: white !important;
   }
+
+  #invoice-printable {
+    margin-top: 0 !important;
+  }
 }

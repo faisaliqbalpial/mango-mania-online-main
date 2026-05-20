@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Check, Download, Home, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import InvoiceDocument, { type InvoiceLabels } from "@/components/InvoiceDocument";
 import { downloadInvoicePdf } from "@/lib/generateInvoicePdf";
 import { loadOrderReceipt } from "@/lib/orderStorage";
 import type { OrderReceipt } from "@/types/order";
+
+const LOGO_SRC = `${import.meta.env.BASE_URL}amerbari-logo.png`;
 
 const COPY = {
   bn: {
@@ -16,6 +19,7 @@ const COPY = {
     customer: "গ্রাহকের তথ্য",
     delivery: "ডেলিভারি",
     items: "অর্ডারের বিবরণ",
+    product: "পণ্য",
     subtotal: "মোট (আম)",
     shipping: "ডেলিভারি চার্জ",
     total: "সর্বমোট",
@@ -42,6 +46,7 @@ const COPY = {
     customer: "Customer details",
     delivery: "Delivery",
     items: "Order details",
+    product: "Item",
     subtotal: "Subtotal (mangoes)",
     shipping: "Delivery charge",
     total: "Grand total",
@@ -73,20 +78,47 @@ function formatMoney(n: number): string {
   return `৳${n.toLocaleString("en-IN")}`;
 }
 
+function invoiceLabels(t: (typeof COPY)["bn"]): InvoiceLabels {
+  return {
+    invoice: t.invoice,
+    orderRef: t.orderRef,
+    date: t.date,
+    customer: t.customer,
+    delivery: t.delivery,
+    items: t.items,
+    product: t.product,
+    qty: t.qty,
+    perKg: t.perKg,
+    lineTotal: t.lineTotal,
+    subtotal: t.subtotal,
+    shipping: t.shipping,
+    total: t.total,
+    cod: t.cod,
+    brand: t.brand,
+    tagline: t.tagline,
+    phone: t.phone,
+    kg: t.kg,
+  };
+}
+
 export default function OrderConfirmation() {
   const [receipt] = useState<OrderReceipt | null>(() => loadOrderReceipt());
   const [pdfLoading, setPdfLoading] = useState(false);
+  const invoiceRef = useRef<HTMLDivElement>(null);
 
   if (!receipt) {
     return <Navigate to="/" replace />;
   }
 
   const t = COPY[receipt.lang];
+  const labels = invoiceLabels(t);
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
+    const el = invoiceRef.current;
+    if (!el) return;
     setPdfLoading(true);
     try {
-      downloadInvoicePdf(receipt);
+      await downloadInvoicePdf(el, receipt.orderRef);
     } catch {
       alert(t.pdfError);
     } finally {
@@ -121,110 +153,14 @@ export default function OrderConfirmation() {
           </div>
         </div>
 
-        <div
-          id="invoice-printable"
-          className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-sm print:mt-0 print:border-0 print:shadow-none"
-        >
-          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
-            <div className="flex items-center gap-3">
-              <img
-                src="/amerbari-logo.png"
-                alt={t.brand}
-                className="h-12 w-12 rounded-lg object-contain"
-              />
-              <div>
-                <p className="text-lg font-extrabold text-primary">{t.brand}</p>
-                <p className="text-xs text-muted-foreground">{t.tagline}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{t.phone}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {t.invoice}
-              </p>
-              <p className="mt-1 font-mono text-sm font-bold text-foreground">{receipt.orderRef}</p>
-            </div>
-          </div>
-
-          <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="text-xs font-semibold uppercase text-muted-foreground">{t.orderRef}</dt>
-              <dd className="font-mono font-medium">{receipt.orderRef}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-semibold uppercase text-muted-foreground">{t.date}</dt>
-              <dd>{formatOrderDate(receipt.createdAt, receipt.lang)}</dd>
-            </div>
-          </dl>
-
-          <div className="mt-6 rounded-xl bg-muted/30 p-4 text-sm">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{t.customer}</p>
-            <p className="mt-2 font-semibold">{receipt.customer.name}</p>
-            <p className="text-muted-foreground">{receipt.customer.mobile}</p>
-            {receipt.customer.email && (
-              <p className="text-muted-foreground">{receipt.customer.email}</p>
-            )}
-            <p className="mt-2 text-muted-foreground">
-              {receipt.customer.districtLabel}
-              {(receipt.customer.upazilaLabel || receipt.customer.upazila)
-                ? ` · ${receipt.customer.upazilaLabel || receipt.customer.upazila}`
-                : ""}
-            </p>
-            <p className="text-muted-foreground">{receipt.customer.address}</p>
-            <p className="mt-2">
-              <span className="font-semibold text-foreground">{t.delivery}: </span>
-              {receipt.deliveryLabel}
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{t.items}</p>
-            <table className="mt-3 w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left text-xs text-muted-foreground">
-                  <th className="pb-2 pr-2">{receipt.lang === "bn" ? "পণ্য" : "Item"}</th>
-                  <th className="pb-2 pr-2">{t.qty}</th>
-                  <th className="pb-2 pr-2 hidden sm:table-cell">{t.perKg}</th>
-                  <th className="pb-2 text-right">{t.lineTotal}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {receipt.items.map((item, i) => (
-                  <tr key={i} className="border-b border-border/60">
-                    <td className="py-3 pr-2">
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.qty} × {item.pkg} {t.kg}
-                      </p>
-                    </td>
-                    <td className="py-3 pr-2 tabular-nums">{item.qty}</td>
-                    <td className="py-3 pr-2 hidden sm:table-cell tabular-nums">
-                      {formatMoney(item.pricePerKg)}
-                    </td>
-                    <td className="py-3 text-right font-semibold tabular-nums">
-                      {formatMoney(item.lineTotal)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-6 space-y-2 border-t border-dashed border-border pt-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">{t.subtotal}</span>
-              <span className="tabular-nums font-medium">{formatMoney(receipt.subtotal)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">{t.shipping}</span>
-              <span className="tabular-nums font-medium">{formatMoney(receipt.shipping)}</span>
-            </div>
-            <div className="flex justify-between text-base font-bold">
-              <span>{t.total}</span>
-              <span className="tabular-nums text-primary">{formatMoney(receipt.total)}</span>
-            </div>
-            <p className="pt-2 text-center text-xs text-muted-foreground">{t.cod}</p>
-          </div>
+        <div ref={invoiceRef} id="invoice-printable" className="mt-10 print:mt-0">
+          <InvoiceDocument
+            receipt={receipt}
+            labels={labels}
+            logoSrc={LOGO_SRC}
+            formatDate={(iso) => formatOrderDate(iso, receipt.lang)}
+            formatMoney={formatMoney}
+          />
         </div>
 
         <p className="no-print mt-6 text-center text-xs text-muted-foreground">
