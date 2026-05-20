@@ -3,7 +3,6 @@ import { Link, Navigate } from "react-router-dom";
 import { Check, Download, Home, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import InvoiceDocument, { type InvoiceLabels } from "@/components/InvoiceDocument";
-import { downloadInvoicePdf } from "@/lib/generateInvoicePdf";
 import { loadOrderReceipt } from "@/lib/orderStorage";
 import type { OrderReceipt } from "@/types/order";
 
@@ -116,6 +115,7 @@ export default function OrderConfirmation() {
   const handleDownloadPdf = async () => {
     setPdfLoading(true);
     try {
+      const { downloadInvoicePdf } = await import("@/lib/generateInvoicePdf");
       await downloadInvoicePdf(
         receipt,
         labels,
@@ -123,8 +123,14 @@ export default function OrderConfirmation() {
         formatMoney,
         LOGO_SRC,
       );
-    } catch {
-      alert(t.pdfError);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      const usePrint = window.confirm(
+        receipt.lang === "bn"
+          ? `${t.pdfError}\n\nপ্রিন্ট ডায়ালগ খুলে “Save as PDF” বেছে নিন?`
+          : `${t.pdfError}\n\nOpen the print dialog and choose “Save as PDF”?`,
+      );
+      if (usePrint) window.print();
     } finally {
       setPdfLoading(false);
     }

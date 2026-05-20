@@ -2,6 +2,19 @@
   command = "npm run build"
   publish = "dist"
 
+# Serve static files (fonts, assets) — do not rewrite to index.html
+[[redirects]]
+  from = "/fonts/*"
+  to = "/fonts/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

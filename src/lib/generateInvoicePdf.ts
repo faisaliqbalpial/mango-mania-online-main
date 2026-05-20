@@ -198,9 +198,7 @@ export async function downloadInvoicePdf(
   });
 
   const bytes = await doc.save();
-  const blob = new Blob([bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)], {
-    type: "application/pdf",
-  });
+  const blob = new Blob([bytes], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
