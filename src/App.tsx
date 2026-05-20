@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { toast, Toaster } from "sonner";
-import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag } from "lucide-react";
+import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag, ChevronDown, ChevronUp } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,8 @@ type Delivery = "courier" | "home";
 
 type VarietyLine = { pkg: Pkg; qty: number };
 type VarietyLayout = "grid" | "list";
+type ProductKey = `${Variety}-${Pkg}`;
+type CartLine = { selected: boolean; qty: number };
 
 const DEFAULT_VARIETY_LINES: Record<Variety, VarietyLine> = {
   nengra: { pkg: "10", qty: 1 },
@@ -36,6 +38,19 @@ const DEFAULT_VARIETY_LINES: Record<Variety, VarietyLine> = {
   himsagor: { pkg: "10", qty: 1 },
   bari4: { pkg: "10", qty: 1 },
 };
+
+function productKey(variety: Variety, pkg: Pkg): ProductKey {
+  return `${variety}-${pkg}`;
+}
+
+function parseProductKey(key: ProductKey): { variety: Variety; pkg: Pkg } {
+  const i = key.lastIndexOf("-");
+  return { variety: key.slice(0, i) as Variety, pkg: key.slice(i + 1) as Pkg };
+}
+
+function varietyHasSelection(variety: Variety, cart: Record<ProductKey, CartLine>): boolean {
+  return (["10", "20", "40"] as Pkg[]).some((p) => cart[productKey(variety, p)]?.selected);
+}
 
 function clampQty(q: number): number {
   if (!Number.isFinite(q)) return 1;
@@ -73,6 +88,9 @@ step1: "আমের জাত নির্বাচন করুন",
 varietyLayoutGrid: "গ্রিড",
 varietyLayoutList: "তালিকা",
 varietyLayoutAria: "পণ্যের দেখার ধরন",
+showMoreOptions: "আরও বিকল্প দেখুন (প্রতিটি প্যাকেজ আলাদা)",
+hideMoreOptions: "সহজ দেখায় ফিরে যান",
+detailedOptionsHint: "একই জাতের একাধিক প্যাকেজ একসাথে বেছে নিতে চাইলে নিচের তালিকা ব্যবহার করুন।",
 step2: "ডেলিভারি পদ্ধতি",
 step3: "ডেলিভারির তথ্য",
 familyPack: "পারিবারিক প্যাক",
@@ -149,6 +167,9 @@ step1: "Select Mango Variety",
 varietyLayoutGrid: "Grid",
 varietyLayoutList: "List",
 varietyLayoutAria: "Product layout",
+showMoreOptions: "Show more options (each pack separately)",
+hideMoreOptions: "Back to simple view",
+detailedOptionsHint: "Use the list below if you want multiple pack sizes of the same variety.",
 step2: "Delivery Method",
 step3: "Delivery Details",
 familyPack: "Family pack",
@@ -229,6 +250,14 @@ const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
   home: { "10": 350, "20": 450, "40": 700 },
 };
 
+const ALL_VARIETIES = Object.keys(VARIETY_IMG) as Variety[];
+const ALL_PKGS = Object.keys(PACKAGE_KG) as Pkg[];
+const PRODUCT_KEYS: ProductKey[] = ALL_VARIETIES.flatMap((v) => ALL_PKGS.map((p) => productKey(v, p)));
+
+function initialCartLines(): Record<ProductKey, CartLine> {
+  return Object.fromEntries(PRODUCT_KEYS.map((k) => [k, { selected: false, qty: 1 }])) as Record<ProductKey, CartLine>;
+}
+
 const SOCIAL_CITIES_BN = ["ঢাকা", "চট্টগ্রাম", "সিলেট", "রাজশাহী", "খুলনা", "বরিশাল", "ময়মনসিংহ", "কুমিল্লা"];
 const SOCIAL_CITIES_EN = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Mymensingh", "Cumilla"];
 
@@ -286,9 +315,10 @@ function randomSocialMessage(lang: Lang): string {
 function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
-const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>([]);
-const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>(() => ({ ...DEFAULT_VARIETY_LINES }));
+const [cartLines, setCartLines] = useState<Record<ProductKey, CartLine>>(initialCartLines);
+const [varietyPrefs, setVarietyPrefs] = useState<Record<Variety, VarietyLine>>(() => ({ ...DEFAULT_VARIETY_LINES }));
 const [varietyLayout, setVarietyLayout] = useState<VarietyLayout>("list");
+const [showDetailedOptions, setShowDetailedOptions] = useState(false);
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
@@ -337,34 +367,34 @@ useEffect(() => {
   };
 }, [lang]);
 
-const subtotal = selectedVarieties.reduce((sum, v) => {
-  const line = varietyLines[v];
-  if (!line) return sum;
-  const q = clampQty(line.qty);
-  return sum + q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
-}, 0);
+const selectedEntries = useMemo(() => {
+  const out: { key: ProductKey; variety: Variety; pkg: Pkg; qty: number }[] = [];
+  for (const k of PRODUCT_KEYS) {
+    const cell = cartLines[k];
+    if (!cell?.selected) continue;
+    const { variety, pkg } = parseProductKey(k);
+    out.push({ key: k, variety, pkg, qty: clampQty(cell.qty) });
+  }
+  return out;
+}, [cartLines]);
+
+const subtotal = selectedEntries.reduce(
+  (sum, { variety, pkg, qty }) => sum + qty * PACKAGE_KG[pkg] * PRICE_PER_KG[variety],
+  0,
+);
 
 const shippingFor = (d: Delivery) =>
-  selectedVarieties.reduce((sum, v) => {
-    const line = varietyLines[v];
-    if (!line) return sum;
-    const q = clampQty(line.qty);
-    return sum + q * DELIVERY_FEES[d][line.pkg];
-  }, 0);
+  selectedEntries.reduce((sum, { pkg, qty }) => sum + qty * DELIVERY_FEES[d][pkg], 0);
 
 const shipping = shippingFor(delivery);
 const total = subtotal + shipping;
 const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
 
-const orderLinesLabel = selectedVarieties
-  .map((v) => {
-    const line = varietyLines[v];
-    if (!line) return null;
-    const q = clampQty(line.qty);
-    return `${t.varieties[v].name}: ${q}×${line.pkg}kg`;
-  })
-  .filter(Boolean)
+const orderLinesLabel = selectedEntries
+  .map(({ variety, pkg, qty }) => `${t.varieties[variety].name}: ${qty}×${pkg}kg`)
   .join("; ");
+
+const uniqueVarietyNames = [...new Set(selectedEntries.map((e) => t.varieties[e.variety].name))].join(", ");
 
 // Validate mobile: exactly 11 digits, numbers only
 const validateMobile = (value: string): boolean => /^\d{11}$/.test(value);
@@ -381,7 +411,7 @@ const handleMobileChange = (v: string) => {
 };
 
 const handleSubmit = (e: React.FormEvent) => {
-  if (selectedVarieties.length === 0) {
+  if (selectedEntries.length === 0) {
     e.preventDefault();
     toast.error(t.selectProducts);
     return;
@@ -401,9 +431,69 @@ const handleSubmit = (e: React.FormEvent) => {
 };
 
 const toggleVariety = (key: Variety) => {
-  setSelectedVarieties((prev) =>
-    prev.includes(key) ? prev.filter((sv) => sv !== key) : [...prev, key],
-  );
+  const prefs = varietyPrefs[key];
+  const pk = productKey(key, prefs.pkg);
+  const on = varietyHasSelection(key, cartLines);
+  setCartLines((prev) => {
+    const next = { ...prev };
+    if (on) {
+      for (const p of ALL_PKGS) {
+        const k = productKey(key, p);
+        next[k] = { ...(next[k] ?? { qty: 1, selected: false }), selected: false };
+      }
+    } else {
+      next[pk] = { selected: true, qty: clampQty(prefs.qty) };
+    }
+    return next;
+  });
+};
+
+const setVarietyPkg = (key: Variety, pkg: Pkg) => {
+  setVarietyPrefs((prev) => ({
+    ...prev,
+    [key]: { ...prev[key], pkg, qty: clampQty(prev[key]?.qty ?? 1) },
+  }));
+  setCartLines((prev) => {
+    if (!varietyHasSelection(key, prev)) return prev;
+    const activePkg = ALL_PKGS.find((p) => prev[productKey(key, p)]?.selected);
+    const q = clampQty(activePkg ? prev[productKey(key, activePkg)]?.qty : prev[productKey(key, pkg)]?.qty ?? 1);
+    const next = { ...prev };
+    for (const p of ALL_PKGS) {
+      const k = productKey(key, p);
+      next[k] = {
+        ...(next[k] ?? { qty: 1, selected: false }),
+        selected: p === pkg,
+        qty: p === pkg ? q : (next[k]?.qty ?? 1),
+      };
+    }
+    return next;
+  });
+};
+
+const setVarietyQty = (key: Variety, qty: number) => {
+  const q = clampQty(qty);
+  const pkg = varietyPrefs[key]?.pkg ?? "10";
+  setVarietyPrefs((prev) => ({ ...prev, [key]: { ...prev[key], pkg, qty: q } }));
+  const pk = productKey(key, pkg);
+  setCartLines((prev) => {
+    if (!prev[pk]?.selected) return prev;
+    return { ...prev, [pk]: { ...prev[pk], qty: q } };
+  });
+};
+
+const toggleProductKey = (pk: ProductKey) => {
+  setCartLines((prev) => {
+    const cur = prev[pk] ?? { selected: false, qty: 1 };
+    return { ...prev, [pk]: { selected: !cur.selected, qty: clampQty(cur.qty) } };
+  });
+};
+
+const setProductQty = (pk: ProductKey, qty: number) => {
+  const q = clampQty(qty);
+  setCartLines((prev) => ({
+    ...prev,
+    [pk]: { ...(prev[pk] ?? { selected: false, qty: 1 }), qty: q },
+  }));
 };
 
 return (
@@ -528,8 +618,8 @@ varietyLayout === "grid" ? "grid gap-4 sm:grid-cols-2" : "flex flex-col gap-4"
 >
 {(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
 const v = t.varieties[key];
-const active = selectedVarieties.includes(key);
-const line = varietyLines[key];
+const active = varietyHasSelection(key, cartLines);
+const line = varietyPrefs[key];
 const q = clampQty(line.qty);
 const isList = varietyLayout === "list";
 return (
@@ -555,12 +645,7 @@ aria-pressed={active}
 id={`variety-${key}`}
 checked={active}
 onClick={(e) => e.stopPropagation()}
-onCheckedChange={(checked) => {
-const on = checked === true;
-setSelectedVarieties((prev) =>
-on ? (prev.includes(key) ? prev : [...prev, key]) : prev.filter((sv) => sv !== key),
-);
-}}
+onCheckedChange={() => toggleVariety(key)}
 className={cn(
 "mt-3 h-5 w-5 shrink-0 rounded-[6px] border-2 border-input shadow-sm data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
 isList ? "sm:mt-8" : "ml-3 mt-3"
@@ -611,12 +696,7 @@ return (
 <button
 key={p}
 type="button"
-onClick={() =>
-setVarietyLines((prev) => ({
-...prev,
-[key]: { ...prev[key], pkg: p, qty: clampQty(prev[key]?.qty ?? 1) },
-}))
-}
+onClick={() => setVarietyPkg(key, p)}
 className={cn(
 "rounded-lg border px-2.5 py-2.5 text-center text-xs font-semibold transition min-h-[58px]",
 pkgActive ? "border-primary bg-accent/50" : "border-border bg-background hover:border-primary/40"
@@ -640,12 +720,7 @@ type="button"
 variant="outline"
 size="sm"
 className="h-8 w-8 px-0"
-onClick={() =>
-setVarietyLines((prev) => ({
-...prev,
-[key]: { ...prev[key], pkg: line.pkg, qty: Math.max(1, q - 1) },
-}))
-}
+onClick={() => setVarietyQty(key, q - 1)}
 aria-label="Decrease quantity"
 >
 -
@@ -656,12 +731,7 @@ type="button"
 variant="outline"
 size="sm"
 className="h-8 w-8 px-0"
-onClick={() =>
-setVarietyLines((prev) => ({
-...prev,
-[key]: { ...prev[key], pkg: line.pkg, qty: Math.min(99, q + 1) },
-}))
-}
+onClick={() => setVarietyQty(key, q + 1)}
 aria-label="Increase quantity"
 >
 +
@@ -673,6 +743,107 @@ aria-label="Increase quantity"
 </div>
 );
 })}
+</div>
+
+<div className="mt-6 border-t border-border pt-5">
+<Button
+type="button"
+variant="outline"
+className="h-11 w-full gap-2 text-sm font-semibold"
+onClick={() => setShowDetailedOptions((v) => !v)}
+>
+{showDetailedOptions ? <ChevronUp className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
+{showDetailedOptions ? t.hideMoreOptions : t.showMoreOptions}
+</Button>
+
+{showDetailedOptions && (
+<div className="mt-4 space-y-3">
+<p className="text-center text-xs text-muted-foreground">{t.detailedOptionsHint}</p>
+<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+{PRODUCT_KEYS.map((pk) => {
+const { variety, pkg } = parseProductKey(pk);
+const vMeta = t.varieties[variety];
+const cell = cartLines[pk] ?? { selected: false, qty: 1 };
+const selected = cell.selected;
+const q = clampQty(cell.qty);
+const lineSub = q * PACKAGE_KG[pkg] * PRICE_PER_KG[variety];
+return (
+<div
+key={pk}
+role="button"
+tabIndex={0}
+onClick={() => toggleProductKey(pk)}
+onKeyDown={(e) => {
+if (e.key === "Enter" || e.key === " ") {
+e.preventDefault();
+toggleProductKey(pk);
+}
+}}
+className={cn(
+"flex cursor-pointer gap-2.5 rounded-xl border-2 bg-card p-2.5 text-left outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:gap-3 sm:p-3",
+selected ? "border-primary shadow-sm ring-1 ring-primary/10" : "border-border hover:border-primary/35"
+)}
+aria-pressed={selected}
+>
+<Checkbox
+checked={selected}
+onClick={(e) => e.stopPropagation()}
+onCheckedChange={() => toggleProductKey(pk)}
+className="mt-1 h-5 w-5 shrink-0 rounded-[6px] border-2 border-input shadow-sm data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+aria-hidden
+tabIndex={-1}
+/>
+<img
+src={VARIETY_IMG[variety]}
+alt={vMeta.name}
+loading="lazy"
+className="h-16 w-16 shrink-0 rounded-lg object-cover sm:h-[4.5rem] sm:w-[4.5rem]"
+/>
+<div className="min-w-0 flex-1 space-y-2">
+<div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
+<p className="text-sm font-bold leading-snug break-words">
+{vMeta.name} · {pkg}{lang === "bn" ? " কেজি" : " KG"}
+</p>
+<p className="shrink-0 text-sm font-semibold tabular-nums text-primary">৳{lineSub}</p>
+</div>
+<p className="text-[11px] text-muted-foreground break-words sm:text-xs">{t.pkgSub[pkg]}</p>
+<div
+className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 px-2 py-1.5"
+onClick={(e) => e.stopPropagation()}
+onKeyDown={(e) => e.stopPropagation()}
+>
+<span className="text-xs font-semibold text-muted-foreground">{t.qty}</span>
+<div className="flex items-center gap-1.5">
+<Button
+type="button"
+variant="outline"
+size="sm"
+className="h-7 w-7 px-0"
+onClick={() => setProductQty(pk, q - 1)}
+aria-label="Decrease quantity"
+>
+-
+</Button>
+<span className="min-w-5 text-center text-sm font-bold tabular-nums">{q}</span>
+<Button
+type="button"
+variant="outline"
+size="sm"
+className="h-7 w-7 px-0"
+onClick={() => setProductQty(pk, q + 1)}
+aria-label="Increase quantity"
+>
++
+</Button>
+</div>
+</div>
+</div>
+</div>
+);
+})}
+</div>
+</div>
+)}
 </div>
 </Card>
 
@@ -701,7 +872,7 @@ sub={t.courierFee(shippingFor("home"))} note={t.homeNote} />
 <input type="hidden" name="District" value={form.area} />
 <input type="hidden" name="Upazila" value={form.upazila} />
 <input type="hidden" name="Address" value={form.address} />
-<input type="hidden" name="Varieties" value={selectedVarieties.map(v => t.varieties[v].name).join(", ")} />
+<input type="hidden" name="Varieties" value={uniqueVarietyNames || "—"} />
 <input type="hidden" name="Order_Lines" value={orderLinesLabel} />
 <input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
 <input type="hidden" name="Total_Price" value={`৳${total}`} />
@@ -788,28 +959,25 @@ value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value
 <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
 <h3 className="text-lg font-bold">{t.summary}</h3>
 <div className="mt-4 space-y-3">
-{selectedVarieties.length === 0 ? (
+{selectedEntries.length === 0 ? (
 <p className="rounded-xl border border-dashed border-border bg-muted/20 px-3 py-6 text-center text-sm text-muted-foreground">
 {t.emptyCart}
 </p>
 ) : (
-selectedVarieties.map((v) => {
-const line = varietyLines[v];
-if (!line) return null;
-const q = clampQty(line.qty);
-const lineSub = q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
+selectedEntries.map(({ key, variety, pkg, qty }) => {
+const lineSub = qty * PACKAGE_KG[pkg] * PRICE_PER_KG[variety];
 return (
-<div key={v} className="flex gap-3 rounded-xl bg-accent/40 p-3">
+<div key={key} className="flex gap-3 rounded-xl bg-accent/40 p-3">
 <img
-src={VARIETY_IMG[v]}
-alt={t.varieties[v].name}
+src={VARIETY_IMG[variety]}
+alt={t.varieties[variety].name}
 loading="lazy"
 className="h-14 w-14 shrink-0 rounded-lg object-cover ring-2 ring-primary/30"
 />
 <div className="min-w-0 flex-1">
-<p className="text-sm font-bold leading-snug break-words">{t.varieties[v].name}</p>
-<p className="mt-1 text-xs text-muted-foreground">
-{q} × {line.pkg} KG
+<p className="text-sm font-bold leading-snug break-words">{t.varieties[variety].name}</p>
+<p className="mt-1 break-words text-xs text-muted-foreground">
+{qty} × {pkg} {lang === "bn" ? "কেজি" : "KG"} · {t.pkgSub[pkg]}
 </p>
 </div>
 <p className="shrink-0 text-sm font-semibold tabular-nums">৳{lineSub}</p>
@@ -831,8 +999,8 @@ value={`৳${shipping}`}
 type="submit"
 form="order-form"
 size="lg"
-className={cn("mt-6 h-12 w-full text-base", selectedVarieties.length === 0 && "opacity-60")}
-disabled={selectedVarieties.length === 0}
+className={cn("mt-6 h-12 w-full text-base", selectedEntries.length === 0 && "opacity-60")}
+disabled={selectedEntries.length === 0}
 >
 {t.confirm}
 </Button>
