@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 Select,
 SelectContent,
@@ -104,6 +105,8 @@ pkg: "প্যাকেজ",
 courierAll: "কুরিয়ার (সারা বাংলাদেশ)",
 homeDel: "হোম ডেলিভারি",
 fillAll: "অনুগ্রহ করে সব আবশ্যক ঘর পূরণ করুন।",
+selectProducts: "অনুগ্রহ করে অন্তত একটি আম টিক করে নির্বাচন করুন।",
+emptyCart: "এখনও কোনো আম নির্বাচন করা হয়নি।",
 ordered: (ref: string) => `প্রি-অর্ডার সম্পন্ন! রেফারেন্স: ${ref}`,
 footerTag: "ভালোবাসায় পৌঁছে দেই বাগানের তাজা আম।",
 location: "রাজশাহী, বাংলাদেশ",
@@ -178,6 +181,8 @@ pkg: "Package",
 courierAll: "Courier (All BD)",
 homeDel: "Home Delivery",
 fillAll: "Please fill in all required fields.",
+selectProducts: "Please tick at least one mango to order.",
+emptyCart: "No mangoes selected yet.",
 ordered: (ref: string) => `Pre-order placed! Reference: ${ref}`,
 footerTag: "Garden-fresh mangoes, delivered with love.",
 location: "Rajshahi, Bangladesh",
@@ -281,7 +286,7 @@ function randomSocialMessage(lang: Lang): string {
 function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
-const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>(["himsagor"]);
+const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>([]);
 const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>(() => ({ ...DEFAULT_VARIETY_LINES }));
 const [varietyLayout, setVarietyLayout] = useState<VarietyLayout>("list");
 const [delivery, setDelivery] = useState<Delivery>("courier");
@@ -376,6 +381,11 @@ const handleMobileChange = (v: string) => {
 };
 
 const handleSubmit = (e: React.FormEvent) => {
+  if (selectedVarieties.length === 0) {
+    e.preventDefault();
+    toast.error(t.selectProducts);
+    return;
+  }
   if (!form.name || !form.mobile || !form.area || !form.upazila || !form.address) {
     e.preventDefault();
     toast.error(t.fillAll);
@@ -521,24 +531,34 @@ return (
 key={key}
 className={cn(
 "group relative overflow-hidden rounded-xl border-2 bg-card transition-all",
-active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40",
-isList && "flex flex-col sm:flex-row sm:items-stretch"
+active ? "border-primary shadow-[var(--shadow-soft)] ring-1 ring-primary/10" : "border-border hover:border-primary/40",
+isList ? "flex gap-2 p-2 sm:gap-3 sm:p-3" : "flex flex-col"
 )}
 >
-<button
-type="button"
-onClick={() => {
-if (selectedVarieties.includes(key)) {
-if (selectedVarieties.length > 1) {
-setSelectedVarieties(selectedVarieties.filter((sv) => sv !== key));
-}
-} else {
-setSelectedVarieties([...selectedVarieties, key]);
-}
+<Checkbox
+id={`variety-${key}`}
+checked={active}
+onCheckedChange={(checked) => {
+const on = checked === true;
+setSelectedVarieties((prev) =>
+on ? (prev.includes(key) ? prev : [...prev, key]) : prev.filter((sv) => sv !== key),
+);
 }}
 className={cn(
-"relative text-left",
-isList ? "flex flex-1 gap-3 p-3 sm:min-w-0 sm:items-center" : "w-full p-3"
+"mt-3 h-5 w-5 shrink-0 rounded-[6px] border-2 border-input shadow-sm data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+isList ? "sm:mt-8" : "ml-3 mt-3"
+)}
+aria-label={
+lang === "bn"
+? `${v.name} অর্ডারে যোগ করুন`
+: `Include ${v.name} in order`
+}
+/>
+
+<div className={cn("min-w-0 flex-1", isList && "flex flex-col sm:flex-row sm:items-stretch")}>
+<div
+className={cn(
+isList ? "flex flex-1 gap-3 p-1 sm:min-w-0 sm:items-center sm:pr-2" : "w-full px-3 pb-1 pt-0"
 )}
 >
 <div
@@ -551,27 +571,21 @@ isList ? "h-24 w-24 sm:h-28 sm:w-28" : "aspect-square w-full"
 className="h-full w-full object-cover transition-transform group-hover:scale-105" />
 </div>
 <div className={cn(isList ? "min-w-0 flex-1 pt-0" : "mt-3")}>
-<p className="text-sm font-bold">{v.name}</p>
-<p className="text-xs text-muted-foreground">{v.sub}</p>
-<p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{v.desc}</p>
+<p className="text-sm font-bold break-words">{v.name}</p>
+<p className="text-xs text-muted-foreground break-words">{v.sub}</p>
+<p className="mt-1 text-xs text-muted-foreground break-words leading-snug">{v.desc}</p>
 </div>
-</button>
-
-{active && (
-<span className="pointer-events-none absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
-<Check className="h-3.5 w-3.5" />
-</span>
-)}
+</div>
 
 <div
 className={cn(
-"space-y-3 px-3 pb-3",
+"space-y-3",
 isList
-? "border-t border-border pt-3 sm:flex sm:w-64 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:py-3 sm:pr-3 sm:pl-4"
-: "border-t border-border pt-3"
+? "border-t border-border px-3 pb-3 pt-3 sm:flex sm:min-w-[19rem] sm:w-80 sm:shrink-0 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:px-5 sm:py-4"
+: "border-t border-border px-3 pb-3 pt-3"
 )}
 >
-<div className="grid grid-cols-3 gap-2">
+<div className="grid grid-cols-3 gap-2.5">
 {(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
 const pkgActive = line.pkg === p;
 return (
@@ -585,13 +599,13 @@ setVarietyLines((prev) => ({
 }))
 }
 className={cn(
-"rounded-lg border px-2 py-2 text-center text-xs font-semibold transition min-h-[56px]",
+"rounded-lg border px-2.5 py-2.5 text-center text-xs font-semibold transition min-h-[58px]",
 pkgActive ? "border-primary bg-accent/50" : "border-border bg-background hover:border-primary/40"
 )}
 aria-pressed={pkgActive}
 >
 <div className="text-sm font-extrabold leading-none">{p} KG</div>
-<div className="mt-1 text-[11px] text-muted-foreground leading-tight whitespace-normal break-words">
+<div className="mt-1.5 text-[11px] text-muted-foreground leading-tight whitespace-normal break-words">
 {t.pkgSub[p]}
 </div>
 </button>
@@ -599,7 +613,7 @@ aria-pressed={pkgActive}
 })}
 </div>
 
-<div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-2 py-2">
+<div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background px-3 py-2.5">
 <span className="text-xs font-semibold text-muted-foreground">{t.qty}</span>
 <div className="flex items-center gap-2">
 <Button
@@ -633,6 +647,7 @@ aria-label="Increase quantity"
 >
 +
 </Button>
+</div>
 </div>
 </div>
 </div>
@@ -754,7 +769,12 @@ value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value
 <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
 <h3 className="text-lg font-bold">{t.summary}</h3>
 <div className="mt-4 space-y-3">
-{selectedVarieties.map((v) => {
+{selectedVarieties.length === 0 ? (
+<p className="rounded-xl border border-dashed border-border bg-muted/20 px-3 py-6 text-center text-sm text-muted-foreground">
+{t.emptyCart}
+</p>
+) : (
+selectedVarieties.map((v) => {
 const line = varietyLines[v];
 if (!line) return null;
 const q = clampQty(line.qty);
@@ -768,7 +788,7 @@ loading="lazy"
 className="h-14 w-14 shrink-0 rounded-lg object-cover ring-2 ring-primary/30"
 />
 <div className="min-w-0 flex-1">
-<p className="text-sm font-bold leading-snug">{t.varieties[v].name}</p>
+<p className="text-sm font-bold leading-snug break-words">{t.varieties[v].name}</p>
 <p className="mt-1 text-xs text-muted-foreground">
 {q} × {line.pkg} KG
 </p>
@@ -776,7 +796,8 @@ className="h-14 w-14 shrink-0 rounded-lg object-cover ring-2 ring-primary/30"
 <p className="shrink-0 text-sm font-semibold tabular-nums">৳{lineSub}</p>
 </div>
 );
-})}
+})
+)}
 </div>
 <div className="mt-5 space-y-2 text-sm">
 <div className="my-3 border-t border-dashed border-border" />
@@ -787,7 +808,13 @@ value={`৳${shipping}`}
 <div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
 </div>
-<Button type="submit" form="order-form" size="lg" className="mt-6 h-12 w-full text-base">
+<Button
+type="submit"
+form="order-form"
+size="lg"
+className={cn("mt-6 h-12 w-full text-base", selectedVarieties.length === 0 && "opacity-60")}
+disabled={selectedVarieties.length === 0}
+>
 {t.confirm}
 </Button>
 <p className="mt-3 text-center text-xs text-muted-foreground">{t.cod}</p>
