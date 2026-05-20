@@ -35,7 +35,7 @@ export default function InvoiceDocument({ receipt, labels, logoSrc, formatDate, 
     <div className="invoice-doc" data-invoice-root>
       <header className="invoice-doc__header">
         <div className="invoice-doc__brand">
-          <img className="invoice-doc__logo" src={logoSrc} alt={labels.brand} crossOrigin="anonymous" />
+          <img className="invoice-doc__logo" src={logoSrc} alt={labels.brand} />
           <div>
             <p className="invoice-doc__brand-name">{labels.brand}</p>
             <p className="invoice-doc__brand-sub">{labels.tagline}</p>

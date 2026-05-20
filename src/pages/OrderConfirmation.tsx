@@ -114,11 +114,15 @@ export default function OrderConfirmation() {
   const labels = invoiceLabels(t);
 
   const handleDownloadPdf = async () => {
-    const el = invoiceRef.current;
-    if (!el) return;
     setPdfLoading(true);
     try {
-      await downloadInvoicePdf(el, receipt.orderRef);
+      await downloadInvoicePdf(
+        receipt,
+        labels,
+        (iso) => formatOrderDate(iso, receipt.lang),
+        formatMoney,
+        LOGO_SRC,
+      );
     } catch {
       alert(t.pdfError);
     } finally {
