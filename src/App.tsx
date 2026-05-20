@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag, ChevronDown, ChevronUp } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
@@ -16,6 +16,9 @@ SelectTrigger,
 SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { saveOrderReceipt } from "@/lib/orderStorage";
+import type { OrderReceipt } from "@/types/order";
+import OrderConfirmation from "@/pages/OrderConfirmation";
 import heroImg from "@/assets/Real mango pic.webp";
 import nengraImg from "@/assets/nengra.jpg";
 import amropaliImg from "@/assets/amropali.jpg";
@@ -312,7 +315,10 @@ function randomSocialMessage(lang: Lang): string {
   return pick(en);
 }
 
+const WEB3FORMS_ACCESS_KEY = "b814ca83-3d5c-4008-a828-72c4352e69d7";
+
 function Landing() {
+const navigate = useNavigate();
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
 const [cartLines, setCartLines] = useState<Record<ProductKey, CartLine>>(initialCartLines);
@@ -322,6 +328,7 @@ const [showDetailedOptions, setShowDetailedOptions] = useState(false);
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
+const [isSubmitting, setIsSubmitting] = useState(false);
 const [activityToast, setActivityToast] = useState<{ id: number; text: string } | null>(null);
 
 useEffect(() => {
@@ -410,24 +417,82 @@ const handleMobileChange = (v: string) => {
   }
 };
 
-const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
   if (selectedEntries.length === 0) {
-    e.preventDefault();
     toast.error(t.selectProducts);
     return;
   }
   if (!form.name || !form.mobile || !form.area || !form.upazila || !form.address) {
-    e.preventDefault();
     toast.error(t.fillAll);
     return;
   }
   if (!validateMobile(form.mobile)) {
-    e.preventDefault();
     setMobileError(t.mobileError);
     toast.error(t.mobileError);
     return;
   }
   setMobileError("");
+
+  const receipt: OrderReceipt = {
+    orderRef,
+    createdAt: new Date().toISOString(),
+    lang,
+    customer: {
+      name: form.name,
+      mobile: form.mobile,
+      email: form.email || "",
+      district: form.area,
+      districtLabel: lang === "bn" ? (DISTRICTS_BN[form.area] ?? form.area) : form.area,
+      upazila: form.upazila,
+      address: form.address,
+    },
+    delivery,
+    deliveryLabel: delivery === "home" ? t.home : t.courier,
+    items: selectedEntries.map(({ variety, pkg, qty }) => ({
+      name: t.varieties[variety].name,
+      pkg,
+      qty,
+      pricePerKg: PRICE_PER_KG[variety],
+      lineTotal: qty * PACKAGE_KG[pkg] * PRICE_PER_KG[variety],
+    })),
+    subtotal,
+    shipping,
+    total,
+  };
+
+  saveOrderReceipt(receipt);
+  setIsSubmitting(true);
+
+  const fd = new FormData();
+  fd.append("access_key", WEB3FORMS_ACCESS_KEY);
+  fd.append("subject", `New Pre-Order from ${form.name}`);
+  fd.append("from_name", "Mango Mania Pre-Order");
+  fd.append("Name", form.name);
+  fd.append("Mobile", form.mobile);
+  fd.append("Email", form.email || "No email provided");
+  fd.append("District", form.area);
+  fd.append("Upazila", form.upazila);
+  fd.append("Address", form.address);
+  fd.append("Varieties", uniqueVarietyNames || "—");
+  fd.append("Order_Lines", orderLinesLabel);
+  fd.append("Delivery", delivery === "home" ? "Home Delivery" : "Courier");
+  fd.append("Total_Price", `৳${total}`);
+  fd.append("Order_Reference", orderRef);
+
+  try {
+    await fetch("https://api.web3forms.com/submit", { method: "POST", body: fd });
+  } catch {
+    toast.error(
+      lang === "bn"
+        ? "অর্ডার সংরক্ষিত হয়েছে, তবে নোটিফিকেশন পাঠানো যায়নি।"
+        : "Order saved, but we could not send the notification email.",
+    );
+  }
+
+  setIsSubmitting(false);
+  toast.success(t.ordered(orderRef));
+  navigate("/order-confirmation", { replace: true });
 };
 
 const toggleVariety = (key: Variety) => {
@@ -859,24 +924,7 @@ sub={t.courierFee(shippingFor("home"))} note={t.homeNote} />
 </Card>
 
 <Card step="3" title={t.step3}>
-<form id="order-form" action="https://api.web3forms.com/submit" method="POST" onSubmit={handleSubmit} className="space-y-5">
-{/* Replace b814ca83-3d5c-4008-a828-72c4352e69d7 with the key sent to your email */}
-<input type="hidden" name="access_key" value="b814ca83-3d5c-4008-a828-72c4352e69d7" />
-<input type="hidden" name="redirect" value={window.location.origin + "/thank-you"} />
-<input type="hidden" name="subject" value={`New Pre-Order from ${form.name}`} />
-{/* Optional: Add from_name to see the customer name as the sender name */}
-<input type="hidden" name="from_name" value="Mango Mania Pre-Order" />
-<input type="hidden" name="Name" value={form.name} />
-<input type="hidden" name="Mobile" value={form.mobile} />
-<input type="hidden" name="Email" value={form.email || "No email provided"} />
-<input type="hidden" name="District" value={form.area} />
-<input type="hidden" name="Upazila" value={form.upazila} />
-<input type="hidden" name="Address" value={form.address} />
-<input type="hidden" name="Varieties" value={uniqueVarietyNames || "—"} />
-<input type="hidden" name="Order_Lines" value={orderLinesLabel} />
-<input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
-<input type="hidden" name="Total_Price" value={`৳${total}`} />
-<input type="hidden" name="Order_Reference" value={orderRef} />
+<form id="order-form" onSubmit={handleSubmit} className="space-y-5">
 <Field label={t.fullName} required icon={<User className="h-4 w-4" />}
 placeholder={t.namePh} value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
 <div className="grid gap-5 sm:grid-cols-2">
@@ -999,10 +1047,10 @@ value={`৳${shipping}`}
 type="submit"
 form="order-form"
 size="lg"
-className={cn("mt-6 h-12 w-full text-base", selectedEntries.length === 0 && "opacity-60")}
-disabled={selectedEntries.length === 0}
+className={cn("mt-6 h-12 w-full text-base", (selectedEntries.length === 0 || isSubmitting) && "opacity-60")}
+disabled={selectedEntries.length === 0 || isSubmitting}
 >
-{t.confirm}
+{isSubmitting ? (lang === "bn" ? "পাঠানো হচ্ছে..." : "Submitting...") : t.confirm}
 </Button>
 <p className="mt-3 text-center text-xs text-muted-foreground">{t.cod}</p>
 </div>
@@ -1156,37 +1204,12 @@ return (
 );
 }
 
-function ThankYou() {
-const [lang] = useState<Lang>("bn");
-return (
-<div className="flex min-h-screen items-center justify-center bg-background px-4">
-<div className="max-w-md text-center">
-<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-<Check className="h-8 w-8" />
-</div>
-<h1 className="mt-6 text-2xl font-bold tracking-tight text-foreground">
-{lang === "bn" ? "ধন্যবাদ! আপনার প্রি-অর্ডারটি গৃহীত হয়েছে।" : "Thank you! Your pre-order has been received."}
-</h1>
-<p className="mt-2 text-sm text-muted-foreground">
-{lang === "bn" ? "আমরা শীঘ্রই কনফার্মেশনের জন্য আপনার সাথে যোগাযোগ করব।" : "We will contact you shortly for confirmation."}
-</p>
-<div className="mt-6">
-<Button asChild>
-<a href="/">
-{lang === "bn" ? "হোমপেজে ফিরে যান" : "Go back home"}
-</a>
-</Button>
-</div>
-</div>
-</div>
-);
-}
-
 export default function App() {
 return (
 <Routes>
 <Route path="/" element={<Landing />} />
-<Route path="/thank-you" element={<ThankYou />} />
+<Route path="/order-confirmation" element={<OrderConfirmation />} />
+<Route path="/thank-you" element={<OrderConfirmation />} />
 </Routes>
 );
 }
