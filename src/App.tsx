@@ -517,7 +517,7 @@ aria-pressed={varietyLayout === "list"}
 >
 <div
 className={cn(
-varietyLayout === "grid" ? "grid gap-4 sm:grid-cols-3" : "flex flex-col gap-4"
+varietyLayout === "grid" ? "grid gap-4 sm:grid-cols-2" : "flex flex-col gap-4"
 )}
 >
 {(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
