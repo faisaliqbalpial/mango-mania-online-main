@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
 Select,
 SelectContent,
@@ -27,20 +26,15 @@ type Variety = "nengra" | "amropali" | "himsagor" | "bari4";
 type Pkg = "10" | "20" | "40";
 type Delivery = "courier" | "home";
 
+type VarietyLine = { pkg: Pkg; qty: number };
 type VarietyLayout = "grid" | "list";
 
-/** One row per variety × package size (12 total) */
-type ProductKey = `${Variety}-${Pkg}`;
-type CartLine = { selected: boolean; qty: number };
-
-function productKey(variety: Variety, pkg: Pkg): ProductKey {
-  return `${variety}-${pkg}`;
-}
-
-function parseProductKey(key: ProductKey): { variety: Variety; pkg: Pkg } {
-  const i = key.lastIndexOf("-");
-  return { variety: key.slice(0, i) as Variety, pkg: key.slice(i + 1) as Pkg };
-}
+const DEFAULT_VARIETY_LINES: Record<Variety, VarietyLine> = {
+  nengra: { pkg: "10", qty: 1 },
+  amropali: { pkg: "10", qty: 1 },
+  himsagor: { pkg: "10", qty: 1 },
+  bari4: { pkg: "10", qty: 1 },
+};
 
 function clampQty(q: number): number {
   if (!Number.isFinite(q)) return 1;
@@ -73,8 +67,8 @@ why: [
 { title: "সারা দেশে ডেলিভারি", text: "বাংলাদেশের সর্বত্র দ্রুত কুরিয়ার ও হোম ডেলিভারি।" },
 ],
 placeOrder: "প্রি-অর্ডার করুন",
-placeOrderSub: "পণ্য ও প্যাকেজ টিক চিহ্ন দিয়ে বেছে নিন, প্রতিটিতে আলাদা পরিমাণ দিন।",
-step1: "আম ও প্যাকেজ নির্বাচন করুন",
+placeOrderSub: "আম বাছাই করুন, প্যাকেজ ও পরিমাণ নির্বাচন করুন, ডেলিভারির ঠিকানা দিন।",
+step1: "আমের জাত নির্বাচন করুন",
 varietyLayoutGrid: "গ্রিড",
 varietyLayoutList: "তালিকা",
 varietyLayoutAria: "পণ্যের দেখার ধরন",
@@ -110,8 +104,6 @@ pkg: "প্যাকেজ",
 courierAll: "কুরিয়ার (সারা বাংলাদেশ)",
 homeDel: "হোম ডেলিভারি",
 fillAll: "অনুগ্রহ করে সব আবশ্যক ঘর পূরণ করুন।",
-selectProducts: "অনুগ্রহ করে অন্তত একটি পণ্য টিক করে নির্বাচন করুন।",
-emptyCart: "এখনও কোনো পণ্য নির্বাচন করা হয়নি।",
 ordered: (ref: string) => `প্রি-অর্ডার সম্পন্ন! রেফারেন্স: ${ref}`,
 footerTag: "ভালোবাসায় পৌঁছে দেই বাগানের তাজা আম।",
 location: "রাজশাহী, বাংলাদেশ",
@@ -149,8 +141,8 @@ why: [
 { title: "Nationwide Delivery", text: "Fast courier and home delivery available across Bangladesh." },
 ],
 placeOrder: "Place your pre-order",
-placeOrderSub: "Tick each mango pack you want and set quantity per line.",
-step1: "Choose mango & package",
+placeOrderSub: "Choose your mango, package size & quantity, and tell us where to deliver.",
+step1: "Select Mango Variety",
 varietyLayoutGrid: "Grid",
 varietyLayoutList: "List",
 varietyLayoutAria: "Product layout",
@@ -186,8 +178,6 @@ pkg: "Package",
 courierAll: "Courier (All BD)",
 homeDel: "Home Delivery",
 fillAll: "Please fill in all required fields.",
-selectProducts: "Please select at least one product.",
-emptyCart: "No products selected yet.",
 ordered: (ref: string) => `Pre-order placed! Reference: ${ref}`,
 footerTag: "Garden-fresh mangoes, delivered with love.",
 location: "Rajshahi, Bangladesh",
@@ -233,14 +223,6 @@ const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
   courier: { "10": 200, "20": 200, "40": 300 },
   home: { "10": 350, "20": 450, "40": 700 },
 };
-
-const ALL_VARIETIES = Object.keys(VARIETY_IMG) as Variety[];
-const ALL_PKGS = Object.keys(PACKAGE_KG) as Pkg[];
-const PRODUCT_KEYS: ProductKey[] = ALL_VARIETIES.flatMap((v) => ALL_PKGS.map((p) => productKey(v, p)));
-
-function initialCartLines(): Record<ProductKey, CartLine> {
-  return Object.fromEntries(PRODUCT_KEYS.map((k) => [k, { selected: false, qty: 1 }])) as Record<ProductKey, CartLine>;
-}
 
 const SOCIAL_CITIES_BN = ["ঢাকা", "চট্টগ্রাম", "সিলেট", "রাজশাহী", "খুলনা", "বরিশাল", "ময়মনসিংহ", "কুমিল্লা"];
 const SOCIAL_CITIES_EN = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Mymensingh", "Cumilla"];
@@ -299,7 +281,8 @@ function randomSocialMessage(lang: Lang): string {
 function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
-const [cartLines, setCartLines] = useState<Record<ProductKey, CartLine>>(initialCartLines);
+const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>(["himsagor"]);
+const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>(() => ({ ...DEFAULT_VARIETY_LINES }));
 const [varietyLayout, setVarietyLayout] = useState<VarietyLayout>("list");
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
@@ -349,37 +332,34 @@ useEffect(() => {
   };
 }, [lang]);
 
-const selectedEntries = useMemo(() => {
-  const out: { key: ProductKey; variety: Variety; pkg: Pkg; qty: number }[] = [];
-  for (const v of ALL_VARIETIES) {
-    for (const p of ALL_PKGS) {
-      const k = productKey(v, p);
-      const cell = cartLines[k];
-      if (cell?.selected) {
-        out.push({ key: k, variety: v, pkg: p, qty: clampQty(cell.qty) });
-      }
-    }
-  }
-  return out;
-}, [cartLines]);
-
-const subtotal = selectedEntries.reduce(
-  (sum, { variety, pkg, qty }) => sum + qty * PACKAGE_KG[pkg] * PRICE_PER_KG[variety],
-  0,
-);
+const subtotal = selectedVarieties.reduce((sum, v) => {
+  const line = varietyLines[v];
+  if (!line) return sum;
+  const q = clampQty(line.qty);
+  return sum + q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
+}, 0);
 
 const shippingFor = (d: Delivery) =>
-  selectedEntries.reduce((sum, { pkg, qty }) => sum + qty * DELIVERY_FEES[d][pkg], 0);
+  selectedVarieties.reduce((sum, v) => {
+    const line = varietyLines[v];
+    if (!line) return sum;
+    const q = clampQty(line.qty);
+    return sum + q * DELIVERY_FEES[d][line.pkg];
+  }, 0);
 
 const shipping = shippingFor(delivery);
 const total = subtotal + shipping;
 const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
 
-const orderLinesLabel = selectedEntries
-  .map(({ variety, pkg, qty }) => `${t.varieties[variety].name}: ${qty}×${pkg}kg`)
+const orderLinesLabel = selectedVarieties
+  .map((v) => {
+    const line = varietyLines[v];
+    if (!line) return null;
+    const q = clampQty(line.qty);
+    return `${t.varieties[v].name}: ${q}×${line.pkg}kg`;
+  })
+  .filter(Boolean)
   .join("; ");
-
-const uniqueVarietyNames = [...new Set(selectedEntries.map((e) => t.varieties[e.variety].name))].join(", ");
 
 // Validate mobile: exactly 11 digits, numbers only
 const validateMobile = (value: string): boolean => /^\d{11}$/.test(value);
@@ -396,11 +376,6 @@ const handleMobileChange = (v: string) => {
 };
 
 const handleSubmit = (e: React.FormEvent) => {
-  if (selectedEntries.length === 0) {
-    e.preventDefault();
-    toast.error(t.selectProducts);
-    return;
-  }
   if (!form.name || !form.mobile || !form.area || !form.upazila || !form.address) {
     e.preventDefault();
     toast.error(t.fillAll);
@@ -530,81 +505,115 @@ aria-pressed={varietyLayout === "list"}
 </div>
 }
 >
-<div className={cn("grid grid-cols-1 md:grid-cols-2", varietyLayout === "grid" ? "gap-3" : "gap-4")}>
-{PRODUCT_KEYS.map((pk) => {
-const { variety, pkg } = parseProductKey(pk);
-const vMeta = t.varieties[variety];
-const line = cartLines[pk] ?? { selected: false, qty: 1 };
+<div
+className={cn(
+varietyLayout === "grid" ? "grid gap-4 sm:grid-cols-3" : "flex flex-col gap-4"
+)}
+>
+{(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
+const v = t.varieties[key];
+const active = selectedVarieties.includes(key);
+const line = varietyLines[key];
 const q = clampQty(line.qty);
-const selected = line.selected;
-const id = `line-${pk}`;
-const lineSub = q * PACKAGE_KG[pkg] * PRICE_PER_KG[variety];
+const isList = varietyLayout === "list";
 return (
 <div
-key={pk}
+key={key}
 className={cn(
-"flex min-w-0 gap-3 rounded-xl border-2 bg-card p-3 transition-all",
-selected ? "border-primary shadow-[var(--shadow-soft)] ring-1 ring-primary/15" : "border-border hover:border-primary/35"
+"group relative overflow-hidden rounded-xl border-2 bg-card transition-all",
+active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40",
+isList && "flex flex-col sm:flex-row sm:items-stretch"
 )}
 >
-<Checkbox
-id={id}
-checked={selected}
-onCheckedChange={(checked) => {
-const on = checked === true;
-setCartLines((prev) => ({
-...prev,
-[pk]: {
-selected: on,
-qty: clampQty(prev[pk]?.qty ?? 1),
-},
-}));
-}}
-className="mt-2 h-5 w-5 shrink-0 rounded-[6px] border-2 border-input shadow-sm transition-shadow data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-aria-label={
-lang === "bn"
-? `${vMeta.name} ${pkg} কেজি অর্ডারে যোগ করুন`
-: `Include ${vMeta.name} ${pkg} kg in order`
+<button
+type="button"
+onClick={() => {
+if (selectedVarieties.includes(key)) {
+if (selectedVarieties.length > 1) {
+setSelectedVarieties(selectedVarieties.filter((sv) => sv !== key));
 }
-/>
+} else {
+setSelectedVarieties([...selectedVarieties, key]);
+}
+}}
+className={cn(
+"relative text-left",
+isList ? "flex flex-1 gap-3 p-3 sm:min-w-0 sm:items-center" : "w-full p-3"
+)}
+>
 <div
 className={cn(
-"h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-lg sm:h-24 sm:w-24",
-varietyLayout === "grid" && "h-20 w-20 sm:h-[4.5rem] sm:w-[4.5rem]"
+"overflow-hidden rounded-lg shrink-0",
+isList ? "h-24 w-24 sm:h-28 sm:w-28" : "aspect-square w-full"
 )}
 >
-<img src={VARIETY_IMG[variety]} alt={vMeta.name} loading="lazy" className="h-full w-full object-cover" />
+<img src={VARIETY_IMG[key]} alt={v.name} loading="lazy"
+className="h-full w-full object-cover transition-transform group-hover:scale-105" />
 </div>
-<div className="min-w-0 flex-1 space-y-2">
-<div className="min-w-0 space-y-1">
-<div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
-<p className="text-sm font-bold leading-snug break-words">
-{vMeta.name} · {pkg}{lang === "bn" ? " কেজি" : " KG"}
-</p>
-<p className="shrink-0 text-sm font-semibold tabular-nums text-primary">৳{lineSub}</p>
+<div className={cn(isList ? "min-w-0 flex-1 pt-0" : "mt-3")}>
+<p className="text-sm font-bold">{v.name}</p>
+<p className="text-xs text-muted-foreground">{v.sub}</p>
+<p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{v.desc}</p>
 </div>
-<p className="text-xs text-muted-foreground break-words">{vMeta.sub}</p>
-<p className="text-xs font-medium text-foreground/80 break-words leading-snug">{t.pkgSub[pkg]}</p>
-<p className="text-[11px] leading-snug text-muted-foreground break-words sm:text-xs">{vMeta.desc}</p>
+</button>
+
+{active && (
+<span className="pointer-events-none absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+<Check className="h-3.5 w-3.5" />
+</span>
+)}
+
+<div
+className={cn(
+"space-y-3 px-3 pb-3",
+isList
+? "border-t border-border pt-3 sm:flex sm:w-64 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:py-3 sm:pr-3 sm:pl-4"
+: "border-t border-border pt-3"
+)}
+>
+<div className="grid grid-cols-3 gap-2">
+{(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
+const pkgActive = line.pkg === p;
+return (
+<button
+key={p}
+type="button"
+onClick={() =>
+setVarietyLines((prev) => ({
+...prev,
+[key]: { ...prev[key], pkg: p, qty: clampQty(prev[key]?.qty ?? 1) },
+}))
+}
+className={cn(
+"rounded-lg border px-2 py-2 text-center text-xs font-semibold transition min-h-[56px]",
+pkgActive ? "border-primary bg-accent/50" : "border-border bg-background hover:border-primary/40"
+)}
+aria-pressed={pkgActive}
+>
+<div className="text-sm font-extrabold leading-none">{p} KG</div>
+<div className="mt-1 text-[11px] text-muted-foreground leading-tight whitespace-normal break-words">
+{t.pkgSub[p]}
 </div>
-<div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 px-2 py-1.5">
+</button>
+);
+})}
+</div>
+
+<div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-2 py-2">
 <span className="text-xs font-semibold text-muted-foreground">{t.qty}</span>
-<div className="flex items-center gap-1.5">
+<div className="flex items-center gap-2">
 <Button
 type="button"
 variant="outline"
 size="sm"
 className="h-8 w-8 px-0"
 onClick={() =>
-setCartLines((prev) => {
-const cur = prev[pk] ?? { selected: false, qty: 1 };
-return {
+setVarietyLines((prev) => ({
 ...prev,
-[pk]: { ...cur, qty: Math.max(1, clampQty(cur.qty) - 1) },
-};
-})
+[key]: { ...prev[key], pkg: line.pkg, qty: Math.max(1, q - 1) },
+}))
 }
-aria-label={lang === "bn" ? "পরিমাণ কমান" : "Decrease quantity"}
+aria-label="Decrease quantity"
 >
 -
 </Button>
@@ -615,15 +624,12 @@ variant="outline"
 size="sm"
 className="h-8 w-8 px-0"
 onClick={() =>
-setCartLines((prev) => {
-const cur = prev[pk] ?? { selected: false, qty: 1 };
-return {
+setVarietyLines((prev) => ({
 ...prev,
-[pk]: { ...cur, qty: Math.min(99, clampQty(cur.qty) + 1) },
-};
-})
+[key]: { ...prev[key], pkg: line.pkg, qty: Math.min(99, q + 1) },
+}))
 }
-aria-label={lang === "bn" ? "পরিমাণ বাড়ান" : "Increase quantity"}
+aria-label="Increase quantity"
 >
 +
 </Button>
@@ -661,7 +667,7 @@ sub={t.courierFee(shippingFor("home"))} note={t.homeNote} />
 <input type="hidden" name="District" value={form.area} />
 <input type="hidden" name="Upazila" value={form.upazila} />
 <input type="hidden" name="Address" value={form.address} />
-<input type="hidden" name="Varieties" value={uniqueVarietyNames || "—"} />
+<input type="hidden" name="Varieties" value={selectedVarieties.map(v => t.varieties[v].name).join(", ")} />
 <input type="hidden" name="Order_Lines" value={orderLinesLabel} />
 <input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
 <input type="hidden" name="Total_Price" value={`৳${total}`} />
@@ -748,32 +754,29 @@ value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value
 <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
 <h3 className="text-lg font-bold">{t.summary}</h3>
 <div className="mt-4 space-y-3">
-{selectedEntries.length === 0 ? (
-<p className="rounded-xl border border-dashed border-border bg-muted/20 px-3 py-6 text-center text-sm text-muted-foreground">
-{t.emptyCart}
-</p>
-) : (
-selectedEntries.map(({ key, variety, pkg, qty }) => {
-const lineSub = qty * PACKAGE_KG[pkg] * PRICE_PER_KG[variety];
+{selectedVarieties.map((v) => {
+const line = varietyLines[v];
+if (!line) return null;
+const q = clampQty(line.qty);
+const lineSub = q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
 return (
-<div key={key} className="flex gap-3 rounded-xl bg-accent/40 p-3">
+<div key={v} className="flex gap-3 rounded-xl bg-accent/40 p-3">
 <img
-src={VARIETY_IMG[variety]}
-alt={t.varieties[variety].name}
+src={VARIETY_IMG[v]}
+alt={t.varieties[v].name}
 loading="lazy"
 className="h-14 w-14 shrink-0 rounded-lg object-cover ring-2 ring-primary/30"
 />
 <div className="min-w-0 flex-1">
-<p className="text-sm font-bold leading-snug break-words">{t.varieties[variety].name}</p>
-<p className="mt-1 break-words text-xs text-muted-foreground">
-{qty} × {pkg} {lang === "bn" ? "কেজি" : "KG"} · {t.pkgSub[pkg]}
+<p className="text-sm font-bold leading-snug">{t.varieties[v].name}</p>
+<p className="mt-1 text-xs text-muted-foreground">
+{q} × {line.pkg} KG
 </p>
 </div>
 <p className="shrink-0 text-sm font-semibold tabular-nums">৳{lineSub}</p>
 </div>
 );
-})
-)}
+})}
 </div>
 <div className="mt-5 space-y-2 text-sm">
 <div className="my-3 border-t border-dashed border-border" />
@@ -784,13 +787,7 @@ value={`৳${shipping}`}
 <div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
 </div>
-<Button
-type="submit"
-form="order-form"
-size="lg"
-className={cn("mt-6 h-12 w-full text-base", selectedEntries.length === 0 && "opacity-60")}
-disabled={selectedEntries.length === 0}
->
+<Button type="submit" form="order-form" size="lg" className="mt-6 h-12 w-full text-base">
 {t.confirm}
 </Button>
 <p className="mt-3 text-center text-xs text-muted-foreground">{t.cod}</p>
