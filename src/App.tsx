@@ -97,7 +97,6 @@ mangoLine: (kg: string, p: number) => `আম (${kg}কেজি × ৳${p})`,
 qty: "পরিমাণ",
 deliveryCharge: "ডেলিভারি চার্জ",
 total: "সর্বমোট",
-totalHint: "ডেলিভারি চার্জ সহ",
 confirm: "প্রি-অর্ডার নিশ্চিত করুন",
 cod: "ক্যাশ অন ডেলিভারি উপলব্ধ। আমরা কনফার্মের জন্য কল করব।",
 feesTitle: "ডেলিভারি চার্জ",
@@ -172,7 +171,6 @@ mangoLine: (kg: string, p: number) => `Mango (${kg}kg × ৳${p})`,
 qty: "Quantity",
 deliveryCharge: "Delivery charge",
 total: "Total",
-totalHint: "Includes delivery",
 confirm: "Confirm Pre-Order",
 cod: "Cash on delivery available. We'll call to confirm.",
 feesTitle: "Delivery Charges",
@@ -295,6 +293,18 @@ useEffect(() => {
   let cancelled = false;
   const timeouts: ReturnType<typeof setTimeout>[] = [];
 
+  /** ms until the first “someone ordered” toast appears after load */
+  const FIRST_TOAST_MIN = 2000;
+  const FIRST_TOAST_MAX = 6500;
+
+  /** ms between hiding a toast and showing the next one */
+  const GAP_BEFORE_SHOW_MIN = 4500;
+  const GAP_BEFORE_SHOW_MAX = 15500;
+
+  /** ms each toast stays visible before fading */
+  const VISIBLE_MIN = 2100;
+  const VISIBLE_MAX = 4400;
+
   const after = (ms: number, fn: () => void) => {
     const id = setTimeout(() => {
       if (!cancelled) fn();
@@ -302,17 +312,19 @@ useEffect(() => {
     timeouts.push(id);
   };
 
+  const randBetween = (min: number, max: number) => min + Math.random() * (max - min);
+
   const cycle = () => {
-    after(4500 + Math.random() * 11000, () => {
+    after(randBetween(GAP_BEFORE_SHOW_MIN, GAP_BEFORE_SHOW_MAX), () => {
       setActivityToast({ id: Date.now(), text: randomSocialMessage(lang) });
-      after(2100 + Math.random() * 2300, () => {
+      after(randBetween(VISIBLE_MIN, VISIBLE_MAX), () => {
         setActivityToast(null);
         cycle();
       });
     });
   };
 
-  after(2000 + Math.random() * 4500, cycle);
+  after(randBetween(FIRST_TOAST_MIN, FIRST_TOAST_MAX), cycle);
 
   return () => {
     cancelled = true;
@@ -573,13 +585,15 @@ setVarietyLines((prev) => ({
 }))
 }
 className={cn(
-"rounded-lg border px-2 py-2 text-center text-xs font-semibold transition",
+"rounded-lg border px-2 py-2 text-center text-xs font-semibold transition min-h-[56px]",
 pkgActive ? "border-primary bg-accent/50" : "border-border bg-background hover:border-primary/40"
 )}
 aria-pressed={pkgActive}
 >
 <div className="text-sm font-extrabold leading-none">{p} KG</div>
-<div className="mt-1 text-[11px] text-muted-foreground leading-tight line-clamp-1">{t.pkgSub[p]}</div>
+<div className="mt-1 text-[11px] text-muted-foreground leading-tight whitespace-normal break-words">
+{t.pkgSub[p]}
+</div>
 </button>
 );
 })}
@@ -766,8 +780,12 @@ className="h-14 w-14 shrink-0 rounded-lg object-cover ring-2 ring-primary/30"
 </div>
 <div className="mt-5 space-y-2 text-sm">
 <div className="my-3 border-t border-dashed border-border" />
+<Row
+label={`${t.deliveryCharge} (${delivery === "home" ? t.home : t.courier})`}
+value={`৳${shipping}`}
+/>
+<div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
-<p className="text-center text-[11px] text-muted-foreground">{t.totalHint}</p>
 </div>
 <Button type="submit" form="order-form" size="lg" className="mt-6 h-12 w-full text-base">
 {t.confirm}
