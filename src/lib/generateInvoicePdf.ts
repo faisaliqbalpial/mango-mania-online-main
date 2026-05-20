@@ -16,10 +16,6 @@ const MARGIN = 40;
 
 type Fonts = { regular: PDFFont; bold: PDFFont };
 
-function lineGap(size: number) {
-  return size * 1.45;
-}
-
 function drawRight(page: PDFPage, text: string, xRight: number, y: number, size: number, font: PDFFont, color: RGB) {
   const w = font.widthOfTextAtSize(text, size);
   page.drawText(text, { x: xRight - w, y, size, font, color });
