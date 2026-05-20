@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { toast, Toaster } from "sonner";
-import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List } from "lucide-react";
+import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,6 +97,7 @@ mangoLine: (kg: string, p: number) => `আম (${kg}কেজি × ৳${p})`,
 qty: "পরিমাণ",
 deliveryCharge: "ডেলিভারি চার্জ",
 total: "সর্বমোট",
+totalHint: "ডেলিভারি চার্জ সহ",
 confirm: "প্রি-অর্ডার নিশ্চিত করুন",
 cod: "ক্যাশ অন ডেলিভারি উপলব্ধ। আমরা কনফার্মের জন্য কল করব।",
 feesTitle: "ডেলিভারি চার্জ",
@@ -171,6 +172,7 @@ mangoLine: (kg: string, p: number) => `Mango (${kg}kg × ৳${p})`,
 qty: "Quantity",
 deliveryCharge: "Delivery charge",
 total: "Total",
+totalHint: "Includes delivery",
 confirm: "Confirm Pre-Order",
 cod: "Cash on delivery available. We'll call to confirm.",
 feesTitle: "Delivery Charges",
@@ -220,19 +222,103 @@ const DISTRICTS_BN: Record<string, string> = {
 
 const PACKAGE_KG: Record<Pkg, number> = { "10": 10, "20": 20, "40": 40 };
 const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
-courier: { "10": 200, "20": 200, "40": 300 },
-home: { "10": 350, "20": 450, "40": 700 },
+  courier: { "10": 200, "20": 200, "40": 300 },
+  home: { "10": 350, "20": 450, "40": 700 },
 };
+
+const SOCIAL_CITIES_BN = ["ঢাকা", "চট্টগ্রাম", "সিলেট", "রাজশাহী", "খুলনা", "বরিশাল", "ময়মনসিংহ", "কুমিল্লা"];
+const SOCIAL_CITIES_EN = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Mymensingh", "Cumilla"];
+
+function pick<T>(arr: readonly T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)]!;
+}
+
+function randomSocialMessage(lang: Lang): string {
+  const t = T[lang];
+  const v = pick(Object.keys(VARIETY_IMG) as Variety[]);
+  const mango = t.varieties[v].name;
+  const pkg = pick(["10", "20", "40"] as Pkg[]);
+  const kg = PACKAGE_KG[pkg];
+  const city = lang === "bn" ? pick(SOCIAL_CITIES_BN) : pick(SOCIAL_CITIES_EN);
+
+  if (lang === "bn") {
+    const bn = [
+      `${city} · এইমাত্র কেউ ${kg} কেজি ${mango} বেছে নিলেন`,
+      `নতুন প্রি-অর্ডার — ${mango} · ${kg} কেজি`,
+      `কেউ এইমাত্র ${kg} কেজি ${mango} কনফার্ম করেছেন`,
+      `${city} থেকে · ${kg} কেজি ${mango} প্যাক`,
+      `এইমাত্র · ${mango} (${kg} কেজি) অর্ডার হয়েছে`,
+      `${kg} কেজি ${mango} — নতুন বুকিং`,
+      `একটি অর্ডার · ${mango} (${kg} কেজি) · ${city}`,
+      `সদ্যই · ${city} · ${kg} কেজি ${mango}`,
+      `প্রি-অর্ডার আপডেট · ${mango} ${kg} কেজি`,
+      `ক্রেতা · ${city} · ${mango} (${kg} কেজি)`,
+      `এইমাত্র যোগ হলো · ${kg} কেজি ${mango}`,
+      `${mango} · ${kg} কেজি · ${city} থেকে`,
+      `নতুন · ${kg} কেজি প্যাক (${mango})`,
+      `${city} · ${mango} · ${kg} কেজি নিয়েছেন`,
+    ];
+    return pick(bn);
+  }
+
+  const en = [
+    `Someone in ${city} just booked ${kg}kg of ${mango}`,
+    `New pre-order — ${mango}, ${kg}kg pack`,
+    `Just now · ${kg}kg ${mango} · ${city}`,
+    `Order in · ${mango} (${kg}kg) from ${city}`,
+    `${kg}kg ${mango} · confirmed`,
+    `Fresh booking: ${mango} · ${city}`,
+    `${city} · ${mango} · ${kg}kg selected`,
+    `A customer near ${city} chose ${kg}kg ${mango}`,
+    `Pre-order: ${mango} x${kg}kg`,
+    `${mango} · ${kg}kg · new`,
+    `Someone reserved ${kg}kg ${mango}`,
+    `Latest: ${kg}kg pack · ${mango}`,
+    `${city} · just grabbed ${kg}kg ${mango}`,
+    `New: ${mango} (${kg}kg)`,
+  ];
+  return pick(en);
+}
 
 function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
 const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>(["himsagor"]);
 const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>(() => ({ ...DEFAULT_VARIETY_LINES }));
-const [varietyLayout, setVarietyLayout] = useState<VarietyLayout>("grid");
+const [varietyLayout, setVarietyLayout] = useState<VarietyLayout>("list");
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
+const [activityToast, setActivityToast] = useState<{ id: number; text: string } | null>(null);
+
+useEffect(() => {
+  let cancelled = false;
+  const timeouts: ReturnType<typeof setTimeout>[] = [];
+
+  const after = (ms: number, fn: () => void) => {
+    const id = setTimeout(() => {
+      if (!cancelled) fn();
+    }, ms);
+    timeouts.push(id);
+  };
+
+  const cycle = () => {
+    after(4500 + Math.random() * 11000, () => {
+      setActivityToast({ id: Date.now(), text: randomSocialMessage(lang) });
+      after(2100 + Math.random() * 2300, () => {
+        setActivityToast(null);
+        cycle();
+      });
+    });
+  };
+
+  after(2000 + Math.random() * 4500, cycle);
+
+  return () => {
+    cancelled = true;
+    timeouts.forEach(clearTimeout);
+  };
+}, [lang]);
 
 const subtotal = selectedVarieties.reduce((sum, v) => {
   const line = varietyLines[v];
@@ -653,40 +739,36 @@ value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value
 <aside className="lg:sticky lg:top-6 lg:self-start">
 <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
 <h3 className="text-lg font-bold">{t.summary}</h3>
-<div className="mt-4 flex items-center gap-2 flex-wrap rounded-xl bg-accent/40 p-3">
-{selectedVarieties.map(v => (
-<img key={v} src={VARIETY_IMG[v]} alt={t.varieties[v].name} loading="lazy" title={t.varieties[v].name}
-className="h-12 w-12 rounded-lg object-cover ring-2 ring-primary" />
-))}
-<div className="flex-1 min-w-0">
-<p className="text-sm font-bold">{selectedVarieties.map(v => t.varieties[v].name).join(", ")}</p>
-<p className="text-xs text-muted-foreground">
-{selectedVarieties.map((v) => {
-const line = varietyLines[v];
-if (!line) return null;
-return `${t.varieties[v].name} (${clampQty(line.qty)}×${line.pkg} KG)`;
-}).filter(Boolean).join(" · ")} • {delivery === "home" ? t.home : t.courier}
-</p>
-</div>
-</div>
-<dl className="mt-5 space-y-2 text-sm">
+<div className="mt-4 space-y-3">
 {selectedVarieties.map((v) => {
 const line = varietyLines[v];
 if (!line) return null;
 const q = clampQty(line.qty);
 const lineSub = q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
 return (
-<Row
-key={v}
-label={`${t.varieties[v].name} (${line.pkg}kg × ৳${PRICE_PER_KG[v]}) × ${q}`}
-value={`৳${lineSub}`}
+<div key={v} className="flex gap-3 rounded-xl bg-accent/40 p-3">
+<img
+src={VARIETY_IMG[v]}
+alt={t.varieties[v].name}
+loading="lazy"
+className="h-14 w-14 shrink-0 rounded-lg object-cover ring-2 ring-primary/30"
 />
+<div className="min-w-0 flex-1">
+<p className="text-sm font-bold leading-snug">{t.varieties[v].name}</p>
+<p className="mt-1 text-xs text-muted-foreground">
+{q} × {line.pkg} KG
+</p>
+</div>
+<p className="shrink-0 text-sm font-semibold tabular-nums">৳{lineSub}</p>
+</div>
 );
 })}
-<Row label={`${t.deliveryCharge} (${delivery === "home" ? t.home : t.courier})`} value={`৳${shipping}`} />
+</div>
+<div className="mt-5 space-y-2 text-sm">
 <div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
-</dl>
+<p className="text-center text-[11px] text-muted-foreground">{t.totalHint}</p>
+</div>
 <Button type="submit" form="order-form" size="lg" className="mt-6 h-12 w-full text-base">
 {t.confirm}
 </Button>
@@ -739,6 +821,20 @@ value={`৳${lineSub}`}
 <p className="mt-4 text-xs">📍 {t.location} • © {new Date().getFullYear()}</p>
 </div>
 </footer>
+
+{activityToast && (
+<div
+key={activityToast.id}
+className="pointer-events-none fixed bottom-4 left-4 z-[60] max-w-[min(22rem,calc(100vw-2rem))] animate-in fade-in slide-in-from-bottom-3 slide-in-from-left-2 duration-500"
+role="status"
+aria-live="polite"
+>
+<div className="flex gap-2.5 rounded-xl border border-border bg-card/95 px-3 py-2.5 shadow-lg backdrop-blur-sm sm:gap-3 sm:px-3.5">
+<ShoppingBag className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+<p className="text-xs leading-snug text-foreground sm:text-[13px]">{activityToast.text}</p>
+</div>
+</div>
+)}
 </div>
 );
 }
