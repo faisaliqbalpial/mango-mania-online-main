@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
@@ -27,6 +27,13 @@ type Variety = "nengra" | "amropali" | "himsagor" | "bari4";
 type Pkg = "10" | "20" | "40";
 type Delivery = "courier" | "home";
 
+type VarietyLine = { pkg: Pkg; qty: number };
+
+function clampQty(q: number): number {
+  if (!Number.isFinite(q)) return 1;
+  return Math.max(1, Math.min(99, Math.floor(q)));
+}
+
 const T = {
 bn: {
 brand: "আমের বাড়ি",
@@ -53,11 +60,10 @@ why: [
 { title: "সারা দেশে ডেলিভারি", text: "বাংলাদেশের সর্বত্র দ্রুত কুরিয়ার ও হোম ডেলিভারি।" },
 ],
 placeOrder: "প্রি-অর্ডার করুন",
-placeOrderSub: "আম বাছাই করুন, প্যাকেজ নির্বাচন করুন, ডেলিভারির ঠিকানা দিন।",
+placeOrderSub: "আম বাছাই করুন, প্যাকেজ ও পরিমাণ নির্বাচন করুন, ডেলিভারির ঠিকানা দিন।",
 step1: "আমের জাত নির্বাচন করুন",
-step2: "প্যাকেজের আকার বেছে নিন",
-step3: "ডেলিভারি পদ্ধতি",
-step4: "ডেলিভারির তথ্য",
+step2: "ডেলিভারি পদ্ধতি",
+step3: "ডেলিভারির তথ্য",
 familyPack: "পারিবারিক প্যাক",
 bestValue: "সেরা দাম",
 bulkPack: "বাল্ক প্যাক",
@@ -78,6 +84,7 @@ address: "সম্পূর্ণ ঠিকানা",
 addressPh: "বাড়ি নং, রোড নং, এলাকা, থানা...",
 summary: "প্রি-অর্ডার সারাংশ",
 mangoLine: (kg: string, p: number) => `আম (${kg}কেজি × ৳${p})`,
+qty: "পরিমাণ",
 deliveryCharge: "ডেলিভারি চার্জ",
 total: "সর্বমোট",
 confirm: "প্রি-অর্ডার নিশ্চিত করুন",
@@ -124,11 +131,10 @@ why: [
 { title: "Nationwide Delivery", text: "Fast courier and home delivery available across Bangladesh." },
 ],
 placeOrder: "Place your pre-order",
-placeOrderSub: "Choose your mango, pick a package, and tell us where to deliver.",
+placeOrderSub: "Choose your mango, package size & quantity, and tell us where to deliver.",
 step1: "Select Mango Variety",
-step2: "Choose Package Size",
-step3: "Delivery Method",
-step4: "Delivery Details",
+step2: "Delivery Method",
+step3: "Delivery Details",
 familyPack: "Family pack",
 bestValue: "Best value",
 bulkPack: "Bulk pack",
@@ -149,6 +155,7 @@ address: "Full Address",
 addressPh: "House No, Road No, Area, Thana...",
 summary: "Pre-Order Summary",
 mangoLine: (kg: string, p: number) => `Mango (${kg}kg × ৳${p})`,
+qty: "Quantity",
 deliveryCharge: "Delivery charge",
 total: "Total",
 confirm: "Confirm Pre-Order",
@@ -208,18 +215,41 @@ function Landing() {
 const [lang, setLang] = useState<Lang>("bn");
 const t = T[lang];
 const [selectedVarieties, setSelectedVarieties] = useState<Variety[]>(["himsagor"]);
-const [pkgs, setPkgs] = useState<Pkg[]>(["10"]);
+const [varietyLines, setVarietyLines] = useState<Record<Variety, VarietyLine>>({
+  himsagor: { pkg: "10", qty: 1 },
+});
 const [delivery, setDelivery] = useState<Delivery>("courier");
 const [form, setForm] = useState({ name: "", mobile: "", email: "", area: "", upazila: "", address: "" });
 const [mobileError, setMobileError] = useState("");
 
-const subtotal = selectedVarieties.reduce((vSum, v) =>
-  vSum + pkgs.reduce((pSum, p) => pSum + PACKAGE_KG[p] * PRICE_PER_KG[v], 0), 0);
-const shipping = pkgs.reduce((sum, p) => sum + DELIVERY_FEES[delivery][p], 0);
+const subtotal = selectedVarieties.reduce((sum, v) => {
+  const line = varietyLines[v];
+  if (!line) return sum;
+  const q = clampQty(line.qty);
+  return sum + q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
+}, 0);
+
+const shippingFor = (d: Delivery) =>
+  selectedVarieties.reduce((sum, v) => {
+    const line = varietyLines[v];
+    if (!line) return sum;
+    const q = clampQty(line.qty);
+    return sum + q * DELIVERY_FEES[d][line.pkg];
+  }, 0);
+
+const shipping = shippingFor(delivery);
 const total = subtotal + shipping;
 const orderRef = useMemo(() => "ORD-" + Math.floor(Math.random() * 90000 + 10000), []);
 
-const navigate = useNavigate();
+const orderLinesLabel = selectedVarieties
+  .map((v) => {
+    const line = varietyLines[v];
+    if (!line) return null;
+    const q = clampQty(line.qty);
+    return `${t.varieties[v].name}: ${q}×${line.pkg}kg`;
+  })
+  .filter(Boolean)
+  .join("; ");
 
 // Validate mobile: exactly 11 digits, numbers only
 const validateMobile = (value: string): boolean => /^\d{11}$/.test(value);
@@ -334,16 +364,38 @@ className="relative rounded-3xl object-cover shadow-[var(--shadow-soft)]" />
 {(Object.keys(VARIETY_IMG) as Variety[]).map((key) => {
 const v = t.varieties[key];
 const active = selectedVarieties.includes(key);
+const line = varietyLines[key] ?? { pkg: "10" as Pkg, qty: 1 };
+const q = clampQty(line.qty);
 return (
-<button type="button" key={key} onClick={() => {
+<div
+key={key}
+className={cn(
+"group relative overflow-hidden rounded-xl border-2 bg-card transition-all",
+active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40"
+)}
+>
+<button
+type="button"
+onClick={() => {
 if (selectedVarieties.includes(key)) {
-if (selectedVarieties.length > 1) setSelectedVarieties(selectedVarieties.filter((sv) => sv !== key));
+if (selectedVarieties.length > 1) {
+setSelectedVarieties(selectedVarieties.filter((sv) => sv !== key));
+setVarietyLines((prev) => {
+const next = { ...prev };
+delete next[key];
+return next;
+});
+}
 } else {
 setSelectedVarieties([...selectedVarieties, key]);
+setVarietyLines((prev) => ({
+...prev,
+[key]: prev[key] ?? { pkg: "10", qty: 1 },
+}));
 }
 }}
-className={cn("group relative overflow-hidden rounded-xl border-2 bg-card p-3 text-left transition-all",
-active ? "border-primary shadow-[var(--shadow-soft)]" : "border-border hover:border-primary/40")}>
+className="relative w-full p-3 text-left"
+>
 <div className="aspect-square overflow-hidden rounded-lg">
 <img src={VARIETY_IMG[key]} alt={v.name} loading="lazy"
 className="h-full w-full object-cover transition-transform group-hover:scale-105" />
@@ -359,46 +411,91 @@ className="h-full w-full object-cover transition-transform group-hover:scale-105
 </span>
 )}
 </button>
+
+{active && (
+<div className="space-y-3 border-t border-border px-3 pb-3 pt-3">
+<div className="grid grid-cols-3 gap-2">
+{(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
+const pkgActive = line.pkg === p;
+return (
+<button
+key={p}
+type="button"
+onClick={() =>
+setVarietyLines((prev) => ({
+...prev,
+[key]: { ...prev[key], pkg: p, qty: clampQty(prev[key]?.qty ?? 1) },
+}))
+}
+className={cn(
+"rounded-lg border px-2 py-2 text-center text-xs font-semibold transition",
+pkgActive ? "border-primary bg-accent/50" : "border-border bg-background hover:border-primary/40"
+)}
+aria-pressed={pkgActive}
+>
+<div className="text-sm font-extrabold leading-none">{p} KG</div>
+<div className="mt-1 text-[11px] text-muted-foreground leading-tight line-clamp-1">{t.pkgSub[p]}</div>
+</button>
+);
+})}
+</div>
+
+<div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-2 py-2">
+<span className="text-xs font-semibold text-muted-foreground">{t.qty}</span>
+<div className="flex items-center gap-2">
+<Button
+type="button"
+variant="outline"
+size="sm"
+className="h-8 w-8 px-0"
+onClick={() =>
+setVarietyLines((prev) => ({
+...prev,
+[key]: { ...prev[key], pkg: line.pkg, qty: Math.max(1, q - 1) },
+}))
+}
+aria-label="Decrease quantity"
+>
+-
+</Button>
+<span className="min-w-6 text-center text-sm font-bold tabular-nums">{q}</span>
+<Button
+type="button"
+variant="outline"
+size="sm"
+className="h-8 w-8 px-0"
+onClick={() =>
+setVarietyLines((prev) => ({
+...prev,
+[key]: { ...prev[key], pkg: line.pkg, qty: Math.min(99, q + 1) },
+}))
+}
+aria-label="Increase quantity"
+>
++
+</Button>
+</div>
+</div>
+</div>
+)}
+</div>
 );
 })}
 </div>
 </Card>
 
 <Card step="2" title={t.step2}>
-<div className="grid gap-3 sm:grid-cols-3">
-{(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
-const active = pkgs.includes(p);
-return (
-<button type="button" key={p} onClick={() => {
-if (pkgs.includes(p)) {
-if (pkgs.length > 1) setPkgs(pkgs.filter((pkg) => pkg !== p));
-} else {
-setPkgs([...pkgs, p]);
-}
-}}
-className={cn("rounded-xl border-2 p-4 text-left transition-all",
-active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
-<p className="text-2xl font-extrabold">{p} KG</p>
-<p className="mt-1 text-sm text-muted-foreground">৳{selectedVarieties.reduce((s, v) => s + PACKAGE_KG[p] * PRICE_PER_KG[v], 0)} total</p>
-<p className="mt-1 text-xs text-muted-foreground">{t.pkgSub[p]}</p>
-</button>
-);
-})}
+<div className="grid gap-3 sm:grid-cols-2">
+<DeliveryOption active={delivery === "courier"} onClick={() => setDelivery("courier")}
+icon={<Truck className="h-5 w-5" />} title={t.courier}
+sub={t.courierFee(shippingFor("courier"))} note={t.courierNote} />
+<DeliveryOption active={delivery === "home"} onClick={() => setDelivery("home")}
+icon={<Home className="h-5 w-5" />} title={t.home}
+sub={t.courierFee(shippingFor("home"))} note={t.homeNote} />
 </div>
 </Card>
 
 <Card step="3" title={t.step3}>
-<div className="grid gap-3 sm:grid-cols-2">
-<DeliveryOption active={delivery === "courier"} onClick={() => setDelivery("courier")}
-icon={<Truck className="h-5 w-5" />} title={t.courier}
-sub={t.courierFee(pkgs.reduce((sum, p) => sum + DELIVERY_FEES.courier[p], 0))} note={t.courierNote} />
-<DeliveryOption active={delivery === "home"} onClick={() => setDelivery("home")}
-icon={<Home className="h-5 w-5" />} title={t.home}
-sub={t.courierFee(pkgs.reduce((sum, p) => sum + DELIVERY_FEES.home[p], 0))} note={t.homeNote} />
-</div>
-</Card>
-
-<Card step="4" title={t.step4}>
 <form id="order-form" action="https://api.web3forms.com/submit" method="POST" onSubmit={handleSubmit} className="space-y-5">
 {/* Replace b814ca83-3d5c-4008-a828-72c4352e69d7 with the key sent to your email */}
 <input type="hidden" name="access_key" value="b814ca83-3d5c-4008-a828-72c4352e69d7" />
@@ -413,7 +510,7 @@ sub={t.courierFee(pkgs.reduce((sum, p) => sum + DELIVERY_FEES.home[p], 0))} note
 <input type="hidden" name="Upazila" value={form.upazila} />
 <input type="hidden" name="Address" value={form.address} />
 <input type="hidden" name="Varieties" value={selectedVarieties.map(v => t.varieties[v].name).join(", ")} />
-<input type="hidden" name="Packages" value={pkgs.map(p => p + " KG").join(", ")} />
+<input type="hidden" name="Order_Lines" value={orderLinesLabel} />
 <input type="hidden" name="Delivery" value={delivery === "home" ? "Home Delivery" : "Courier"} />
 <input type="hidden" name="Total_Price" value={`৳${total}`} />
 <input type="hidden" name="Order_Reference" value={orderRef} />
@@ -506,17 +603,29 @@ className="h-12 w-12 rounded-lg object-cover ring-2 ring-primary" />
 <div className="flex-1 min-w-0">
 <p className="text-sm font-bold">{selectedVarieties.map(v => t.varieties[v].name).join(", ")}</p>
 <p className="text-xs text-muted-foreground">
-{pkgs.join(" KG, ")} KG • {delivery === "home" ? t.home : t.courier}
+{selectedVarieties.map((v) => {
+const line = varietyLines[v];
+if (!line) return null;
+return `${t.varieties[v].name} (${clampQty(line.qty)}×${line.pkg} KG)`;
+}).filter(Boolean).join(" · ")} • {delivery === "home" ? t.home : t.courier}
 </p>
 </div>
 </div>
 <dl className="mt-5 space-y-2 text-sm">
-{selectedVarieties.flatMap(v =>
-  pkgs.map(p => (
-    <Row key={`${v}-${p}`} label={`${t.varieties[v].name} (${p}kg × ৳${PRICE_PER_KG[v]})`} value={`৳${PACKAGE_KG[p] * PRICE_PER_KG[v]}`} />
-  ))
-)}
-<Row label={t.deliveryCharge} value={`৳${shipping}`} />
+{selectedVarieties.map((v) => {
+const line = varietyLines[v];
+if (!line) return null;
+const q = clampQty(line.qty);
+const lineSub = q * PACKAGE_KG[line.pkg] * PRICE_PER_KG[v];
+return (
+<Row
+key={v}
+label={`${t.varieties[v].name} (${line.pkg}kg × ৳${PRICE_PER_KG[v]}) × ${q}`}
+value={`৳${lineSub}`}
+/>
+);
+})}
+<Row label={`${t.deliveryCharge} (${delivery === "home" ? t.home : t.courier})`} value={`৳${shipping}`} />
 <div className="my-3 border-t border-dashed border-border" />
 <Row label={t.total} value={`৳${total}`} bold />
 </dl>
