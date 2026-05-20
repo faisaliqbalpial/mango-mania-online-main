@@ -400,6 +400,12 @@ const handleSubmit = (e: React.FormEvent) => {
   setMobileError("");
 };
 
+const toggleVariety = (key: Variety) => {
+  setSelectedVarieties((prev) =>
+    prev.includes(key) ? prev.filter((sv) => sv !== key) : [...prev, key],
+  );
+};
+
 return (
 <div className="min-h-screen bg-background text-foreground" lang={lang}>
 <Toaster position="top-center" richColors />
@@ -529,15 +535,26 @@ const isList = varietyLayout === "list";
 return (
 <div
 key={key}
+role="button"
+tabIndex={0}
+onClick={() => toggleVariety(key)}
+onKeyDown={(e) => {
+if (e.key === "Enter" || e.key === " ") {
+e.preventDefault();
+toggleVariety(key);
+}
+}}
 className={cn(
-"group relative overflow-hidden rounded-xl border-2 bg-card transition-all",
+"group relative cursor-pointer overflow-hidden rounded-xl border-2 bg-card text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
 active ? "border-primary shadow-[var(--shadow-soft)] ring-1 ring-primary/10" : "border-border hover:border-primary/40",
 isList ? "flex gap-2 p-2 sm:gap-3 sm:p-3" : "flex flex-col"
 )}
+aria-pressed={active}
 >
 <Checkbox
 id={`variety-${key}`}
 checked={active}
+onClick={(e) => e.stopPropagation()}
 onCheckedChange={(checked) => {
 const on = checked === true;
 setSelectedVarieties((prev) =>
@@ -584,6 +601,8 @@ isList
 ? "border-t border-border px-3 pb-3 pt-3 sm:flex sm:min-w-[19rem] sm:w-80 sm:shrink-0 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:px-5 sm:py-4"
 : "border-t border-border px-3 pb-3 pt-3"
 )}
+onClick={(e) => e.stopPropagation()}
+onKeyDown={(e) => e.stopPropagation()}
 >
 <div className="grid grid-cols-3 gap-2.5">
 {(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
