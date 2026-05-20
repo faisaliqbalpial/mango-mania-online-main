@@ -325,6 +325,8 @@ function randomSocialMessage(lang: Lang): string {
 }
 
 const WEB3FORMS_ACCESS_KEY = "b814ca83-3d5c-4008-a828-72c4352e69d7";
+/** Set true to re-enable bottom-left “someone ordered” toasts */
+const ENABLE_FAKE_ORDER_TOASTS = false;
 
 function Landing() {
 const navigate = useNavigate();
@@ -341,6 +343,8 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 const [activityToast, setActivityToast] = useState<{ id: number; text: string } | null>(null);
 
 useEffect(() => {
+  if (!ENABLE_FAKE_ORDER_TOASTS) return;
+
   let cancelled = false;
   const timeouts: ReturnType<typeof setTimeout>[] = [];
 
@@ -1123,7 +1127,7 @@ disabled={selectedEntries.length === 0 || isSubmitting}
 </div>
 </footer>
 
-{activityToast && (
+{ENABLE_FAKE_ORDER_TOASTS && activityToast && (
 <div
 key={activityToast.id}
 className="pointer-events-none fixed bottom-4 left-4 z-[60] max-w-[min(22rem,calc(100vw-2rem))] animate-in fade-in slide-in-from-bottom-3 slide-in-from-left-2 duration-500"
