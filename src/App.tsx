@@ -16,6 +16,7 @@ SelectTrigger,
 SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { getDistrictList, getUpazilaLabel, getUpazilasForDistrict } from "@/lib/bangladeshLocations";
 import { saveOrderReceipt } from "@/lib/orderStorage";
 import type { OrderReceipt } from "@/types/order";
 import OrderConfirmation from "@/pages/OrderConfirmation";
@@ -112,6 +113,9 @@ email: "ইমেইল",
 optional: "(ঐচ্ছিক)",
 area: "ডেলিভারি এলাকা",
 selectDistrict: "আপনার জেলা নির্বাচন করুন",
+upazilaThana: "উপজেলা / থানা",
+selectUpazila: "উপজেলা / থানা নির্বাচন করুন",
+upazilaManualPh: "উপজেলা বা থানার নাম লিখুন",
 address: "সম্পূর্ণ ঠিকানা",
 addressPh: "বাড়ি নং, রোড নং, এলাকা, থানা...",
 summary: "প্রি-অর্ডার সারাংশ",
@@ -191,6 +195,9 @@ email: "Email",
 optional: "(Optional)",
 area: "Delivery Area",
 selectDistrict: "Select your district",
+upazilaThana: "Upazila / Thana",
+selectUpazila: "Select upazila / thana",
+upazilaManualPh: "Type upazila or thana name",
 address: "Full Address",
 addressPh: "House No, Road No, Area, Thana...",
 summary: "Pre-Order Summary",
@@ -235,7 +242,6 @@ himsagor: 110,
 bari4: 130,
 };
 
-const DISTRICTS = Object.keys(UPAZILAS_DATA).sort();
 const DISTRICTS_BN: Record<string, string> = {
 "Bagerhat": "বাগেরহাট", "Bandarban": "বান্দরবান", "Barguna": "বরগুনা", "Barishal": "বরিশাল", "Bhola": "ভোলা", "Bogura": "বগুড়া", "Brahmanbaria": "ব্রাহ্মণবাড়িয়া", "Chandpur": "চাঁদপুর",
 "Chattogram": "চট্টগ্রাম", "Chuadanga": "চুয়াডাঙ্গা", "Cox's Bazar": "কক্সবাজার", "Cumilla": "কুমিল্লা", "Dhaka": "ঢাকা", "Dinajpur": "দিনাজপুর", "Faridpur": "ফরিদপুর", "Feni": "ফেনী",
@@ -244,8 +250,11 @@ const DISTRICTS_BN: Record<string, string> = {
 "Madaripur": "মাদারীপুর", "Magura": "মাগুরা", "Manikganj": "মানিকগঞ্জ", "Meherpur": "মেহেরপুর", "Moulvibazar": "মৌলভীবাজার", "Munshiganj": "মুন্সীগঞ্জ", "Mymensingh": "ময়মনসিংহ", "Naogaon": "নওগাঁ",
 "Narail": "নড়াইল", "Narayanganj": "নারায়ণগঞ্জ", "Narsingdi": "নরসিংদী", "Natore": "নাটোর", "Netrokona": "নেত্রকোনা", "Nilphamari": "নীলফামারী", "Noakhali": "নোয়াখালী", "Pabna": "পাবনা",
 "Panchagarh": "পঞ্চগড়", "Patuakhali": "পটুয়াখালী", "Pirojpur": "পিরোজপুর", "Rajbari": "রাজবাড়ী", "Rajshahi": "রাজশাহী", "Rangamati": "রাঙ্গামাটি", "Rangpur": "রংপুর", "Satkhira": "সাতক্ষীরা",
-"Shariatpur": "শরীয়তপুর", "Sherpur": "শেরপুর", "Sirajganj": "সিরাজগঞ্জ", "Sunamganj": "সুনামগঞ্জ", "Sylhet": "সিলেট", "Tangail": "টাঙ্গাইল", "Thakurgaon": "ঠাকুরগাঁও"
+"Shariatpur": "শরীয়তপুর", "Sherpur": "শেরপুর", "Sirajganj": "সিরাজগঞ্জ", "Sunamganj": "সুনামগঞ্জ", "Sylhet": "সিলেট", "Tangail": "টাঙ্গাইল", "Thakurgaon": "ঠাকুরগাঁও",
+"Chapainawabganj": "চাঁপাইনবাবগঞ্জ",
 };
+
+const DISTRICTS = getDistrictList(Object.keys(DISTRICTS_BN));
 
 const PACKAGE_KG: Record<Pkg, number> = { "10": 10, "20": 20, "40": 40 };
 const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
@@ -445,12 +454,14 @@ const handleSubmit = async (e: React.FormEvent) => {
       district: form.area,
       districtLabel: lang === "bn" ? (DISTRICTS_BN[form.area] ?? form.area) : form.area,
       upazila: form.upazila,
+      upazilaLabel: getUpazilaLabel(form.area, form.upazila, lang),
       address: form.address,
     },
     delivery,
     deliveryLabel: delivery === "home" ? t.home : t.courier,
     items: selectedEntries.map(({ variety, pkg, qty }) => ({
       name: t.varieties[variety].name,
+      nameEn: T.en.varieties[variety].name,
       pkg,
       qty,
       pricePerKg: PRICE_PER_KG[variety],
@@ -970,23 +981,33 @@ value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
 </Select>
 </div>
 
-{form.area && UPAZILAS_DATA[form.area as keyof typeof UPAZILAS_DATA] && (
+{form.area && (
 <div className="space-y-2">
 <Label className="text-sm font-semibold">
-Upazila / Thana <span className="text-destructive">*</span>
+{t.upazilaThana} <span className="text-destructive">*</span>
 </Label>
+{getUpazilasForDistrict(form.area).length > 0 ? (
 <Select required value={form.upazila} onValueChange={(v) => setForm({ ...form, upazila: v })}>
 <SelectTrigger className="h-11">
-<SelectValue placeholder="Select Upazila/Thana" />
+<SelectValue placeholder={t.selectUpazila} />
 </SelectTrigger>
 <SelectContent>
-{UPAZILAS_DATA[form.area as keyof typeof UPAZILAS_DATA].map((u: any) => (
+{getUpazilasForDistrict(form.area).map((u) => (
 <SelectItem key={u.en} value={u.en}>
 {lang === "bn" ? u.bn : u.en}
 </SelectItem>
 ))}
 </SelectContent>
 </Select>
+) : (
+<Input
+required
+className="h-11"
+placeholder={t.upazilaManualPh}
+value={form.upazila}
+onChange={(e) => setForm({ ...form, upazila: e.target.value })}
+/>
+)}
 </div>
 )}
 <div className="space-y-2">

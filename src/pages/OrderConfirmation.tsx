@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Check, Download, Home, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -76,7 +76,6 @@ function formatMoney(n: number): string {
 export default function OrderConfirmation() {
   const [receipt] = useState<OrderReceipt | null>(() => loadOrderReceipt());
   const [pdfLoading, setPdfLoading] = useState(false);
-  const invoiceRef = useRef<HTMLDivElement>(null);
 
   if (!receipt) {
     return <Navigate to="/" replace />;
@@ -84,11 +83,10 @@ export default function OrderConfirmation() {
 
   const t = COPY[receipt.lang];
 
-  const handleDownloadPdf = async () => {
-    if (!invoiceRef.current) return;
+  const handleDownloadPdf = () => {
     setPdfLoading(true);
     try {
-      await downloadInvoicePdf(invoiceRef.current, receipt.orderRef);
+      downloadInvoicePdf(receipt);
     } catch {
       alert(t.pdfError);
     } finally {
@@ -124,7 +122,6 @@ export default function OrderConfirmation() {
         </div>
 
         <div
-          ref={invoiceRef}
           id="invoice-printable"
           className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-sm print:mt-0 print:border-0 print:shadow-none"
         >
@@ -169,7 +166,9 @@ export default function OrderConfirmation() {
             )}
             <p className="mt-2 text-muted-foreground">
               {receipt.customer.districtLabel}
-              {receipt.customer.upazila ? ` · ${receipt.customer.upazila}` : ""}
+              {(receipt.customer.upazilaLabel || receipt.customer.upazila)
+                ? ` · ${receipt.customer.upazilaLabel || receipt.customer.upazila}`
+                : ""}
             </p>
             <p className="text-muted-foreground">{receipt.customer.address}</p>
             <p className="mt-2">

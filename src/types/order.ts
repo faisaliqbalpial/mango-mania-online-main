@@ -1,5 +1,6 @@
 export type OrderLineItem = {
   name: string;
+  nameEn?: string;
   pkg: string;
   qty: number;
   pricePerKg: number;
@@ -17,6 +18,7 @@ export type OrderReceipt = {
     district: string;
     districtLabel: string;
     upazila: string;
+    upazilaLabel: string;
     address: string;
   };
   delivery: "courier" | "home";
