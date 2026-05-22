@@ -614,7 +614,7 @@ return (
 <div className="flex items-center gap-2">
 <button
 onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold hover:bg-accent hover:text-accent-foreground transition"
+className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold hover:bg-accent hover:text-accent-foreground transition"
 aria-label="Switch language"
 >
 <Languages className="h-3.5 w-3.5" />
@@ -622,7 +622,7 @@ aria-label="Switch language"
 </button>
 <a
 href="tel:+8801970163903"
-className="hidden items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground sm:inline-flex"
+className="hidden cursor-pointer items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground sm:inline-flex"
 >
 <Phone className="h-4 w-4" /> {t.callUs}
 </a>
@@ -689,7 +689,7 @@ aria-label={t.varietyLayoutAria}
 type="button"
 onClick={() => setVarietyLayout("grid")}
 className={cn(
-"inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
+"inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
 varietyLayout === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
 )}
 aria-pressed={varietyLayout === "grid"}
@@ -701,7 +701,7 @@ aria-pressed={varietyLayout === "grid"}
 type="button"
 onClick={() => setVarietyLayout("list")}
 className={cn(
-"inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
+"inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
 varietyLayout === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
 )}
 aria-pressed={varietyLayout === "list"}
@@ -806,7 +806,7 @@ key={p}
 type="button"
 onClick={() => setVarietyPkg(key, p)}
 className={cn(
-"rounded-lg border px-2.5 py-2.5 text-center text-xs font-semibold transition min-h-[58px]",
+"cursor-pointer rounded-lg border px-2.5 py-2.5 text-center text-xs font-semibold transition min-h-[58px]",
 pkgActive ? "border-primary bg-accent/50" : "border-border bg-background hover:border-primary/40"
 )}
 aria-pressed={pkgActive}
@@ -1207,7 +1207,7 @@ active: boolean; onClick: () => void; icon: React.ReactNode; title: string; sub:
 }) {
 return (
 <button type="button" onClick={onClick}
-className={cn("flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all",
+className={cn("flex cursor-pointer items-start gap-3 rounded-xl border-2 p-4 text-left transition-all",
 active ? "border-primary bg-accent/40" : "border-border bg-card hover:border-primary/40")}>
 <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-primary">
 {icon}
