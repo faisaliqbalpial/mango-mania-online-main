@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
-import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -121,6 +121,9 @@ addressPh: "বাড়ি নং, রোড নং, এলাকা, থান
 summary: "প্রি-অর্ডার সারাংশ",
 mangoLine: (kg: string, p: number) => `আম (${kg}কেজি × ৳${p})`,
 qty: "পরিমাণ",
+addToCart: "কার্টে যোগ করুন",
+inCart: "কার্টে আছে",
+addedToCart: (name: string) => `${name} কার্টে যোগ হয়েছে`,
 deliveryCharge: "ডেলিভারি চার্জ",
 total: "সর্বমোট",
 confirm: "প্রি-অর্ডার নিশ্চিত করুন",
@@ -203,6 +206,9 @@ addressPh: "House No, Road No, Area, Thana...",
 summary: "Pre-Order Summary",
 mangoLine: (kg: string, p: number) => `Mango (${kg}kg × ৳${p})`,
 qty: "Quantity",
+addToCart: "Add to cart",
+inCart: "In cart",
+addedToCart: (name: string) => `Added ${name} to cart`,
 deliveryCharge: "Delivery charge",
 total: "Total",
 confirm: "Confirm Pre-Order",
@@ -528,6 +534,21 @@ const toggleVariety = (key: Variety) => {
   });
 };
 
+const addVarietyToCart = (key: Variety) => {
+  const prefs = varietyPrefs[key];
+  const pk = productKey(key, prefs.pkg);
+  setCartLines((prev) => {
+    const next = { ...prev };
+    for (const p of ALL_PKGS) {
+      const k = productKey(key, p);
+      next[k] = { ...(next[k] ?? { qty: 1, selected: false }), selected: false };
+    }
+    next[pk] = { selected: true, qty: clampQty(prefs.qty) };
+    return next;
+  });
+  toast.success(t.addedToCart(t.varieties[key].name));
+};
+
 const setVarietyPkg = (key: Variety, pkg: Pkg) => {
   setVarietyPrefs((prev) => ({
     ...prev,
@@ -721,21 +742,28 @@ isList ? "flex gap-2 p-2 sm:gap-3 sm:p-3" : "flex flex-col"
 )}
 aria-pressed={active}
 >
+<div
+className={cn(
+"flex shrink-0 items-center justify-center rounded-lg border-2 shadow-sm",
+active ? "border-primary bg-primary/15" : "border-primary/70 bg-white",
+isList ? "mt-2 h-11 w-11 sm:mt-6" : "ml-2 mt-2 h-11 w-11"
+)}
+onClick={(e) => e.stopPropagation()}
+onKeyDown={(e) => e.stopPropagation()}
+>
 <Checkbox
 id={`variety-${key}`}
 checked={active}
 onClick={(e) => e.stopPropagation()}
 onCheckedChange={() => toggleVariety(key)}
-className={cn(
-"mt-3 h-5 w-5 shrink-0 rounded-[6px] border-2 border-input shadow-sm data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
-isList ? "sm:mt-8" : "ml-3 mt-3"
-)}
+className="h-6 w-6 rounded-md border-2 border-primary bg-white shadow-md data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 aria-label={
 lang === "bn"
 ? `${v.name} অর্ডারে যোগ করুন`
 : `Include ${v.name} in order`
 }
 />
+</div>
 
 <div className={cn("min-w-0 flex-1", isList && "flex flex-col sm:flex-row sm:items-stretch")}>
 <div
@@ -818,6 +846,19 @@ aria-label="Increase quantity"
 </Button>
 </div>
 </div>
+
+<Button
+type="button"
+className={cn(
+"h-11 w-full gap-2 text-sm font-semibold shadow-sm",
+active && "border-primary bg-primary/10 text-primary hover:bg-primary/15"
+)}
+variant={active ? "outline" : "default"}
+onClick={() => addVarietyToCart(key)}
+>
+<ShoppingCart className="h-4 w-4 shrink-0" />
+{active ? t.inCart : t.addToCart}
+</Button>
 </div>
 </div>
 </div>
