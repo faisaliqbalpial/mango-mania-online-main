@@ -738,32 +738,26 @@ toggleVariety(key);
 className={cn(
 "group relative cursor-pointer overflow-hidden rounded-xl border-2 bg-card text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
 active ? "border-primary shadow-[var(--shadow-soft)] ring-1 ring-primary/10" : "border-border hover:border-primary/40",
-isList ? "flex gap-2 p-2 sm:gap-3 sm:p-3" : "flex flex-col"
+isList ? "flex items-center gap-3 p-2 sm:gap-3 sm:p-3" : "flex flex-col"
 )}
 aria-pressed={active}
->
-<div
-className={cn(
-"flex shrink-0 items-center justify-center rounded-lg border-2 shadow-sm",
-active ? "border-primary bg-primary/15" : "border-primary/70 bg-white",
-isList ? "mt-2 h-11 w-11 sm:mt-6" : "ml-2 mt-2 h-11 w-11"
-)}
-onClick={(e) => e.stopPropagation()}
-onKeyDown={(e) => e.stopPropagation()}
 >
 <Checkbox
 id={`variety-${key}`}
 checked={active}
 onClick={(e) => e.stopPropagation()}
 onCheckedChange={() => toggleVariety(key)}
-className="h-6 w-6 rounded-md border-2 border-primary bg-white shadow-md data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+className={cn(
+"h-6 w-6 shrink-0 rounded-md border-2 border-primary bg-white shadow-sm",
+"data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+isList ? "self-center" : "ml-3 mt-3"
+)}
 aria-label={
 lang === "bn"
 ? `${v.name} অর্ডারে যোগ করুন`
 : `Include ${v.name} in order`
 }
 />
-</div>
 
 <div className={cn("min-w-0 flex-1", isList && "flex flex-col sm:flex-row sm:items-stretch")}>
 <div
