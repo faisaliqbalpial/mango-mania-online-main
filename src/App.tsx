@@ -603,12 +603,12 @@ return (
 
 {/* Top bar */}
 <header className="border-b border-border bg-card">
-<div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-<div className="flex items-center gap-3">
-<img src="/amerbari-logo.png" alt={`${t.brand} logo`} className="h-12 w-12 rounded-lg object-contain" />
-<div>
-<p className="text-sm font-bold leading-tight">{t.brand}</p>
-<p className="text-xs text-muted-foreground leading-tight">{t.tagline}</p>
+<div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4">
+<div className="flex items-center gap-3 sm:gap-4">
+<img src="/amerbari-logo.png" alt={`${t.brand} logo`} className="h-14 w-14 shrink-0 rounded-lg object-contain sm:h-20 sm:w-20" />
+<div className="min-w-0">
+<p className="text-lg font-extrabold leading-tight text-primary sm:text-2xl">{t.brand}</p>
+<p className="text-xs text-muted-foreground leading-snug sm:text-sm">{t.tagline}</p>
 </div>
 </div>
 <div className="flex items-center gap-2">
@@ -1153,9 +1153,9 @@ disabled={selectedEntries.length === 0 || isSubmitting}
 
 <footer className="border-t border-border bg-card py-8">
 <div className="mx-auto max-w-6xl px-4 text-center text-sm text-muted-foreground">
-<div className="flex items-center justify-center gap-2">
-<img src="/amerbari-logo.png" alt="" className="h-8 w-8 object-contain" />
-<p className="font-semibold text-foreground">{t.brand}</p>
+<div className="flex items-center justify-center gap-3">
+<img src="/amerbari-logo.png" alt="" className="h-11 w-11 object-contain" />
+<p className="text-lg font-bold text-foreground">{t.brand}</p>
 </div>
 <p className="mt-1">{t.footerTag}</p>
 <div className="mt-4 flex justify-center">
