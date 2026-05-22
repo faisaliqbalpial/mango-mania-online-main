@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "pack:cpanel": "npm run build && powershell -NoProfile -Command \"Compress-Archive -Path dist\\* -DestinationPath amerbari-cpanel-deploy.zip -Force\"",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
