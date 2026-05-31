@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Link } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
 import UPAZILAS_DATA from "./upazilas.json";
@@ -20,6 +20,7 @@ import { getDistrictList, getUpazilaLabel, getUpazilasForDistrict } from "@/lib/
 import { saveOrderReceipt } from "@/lib/orderStorage";
 import type { OrderReceipt } from "@/types/order";
 import OrderConfirmation from "@/pages/OrderConfirmation";
+import PolicyPage from "@/pages/PolicyPage";
 import heroImg from "@/assets/Real mango pic.webp";
 import nengraImg from "@/assets/nengra.jpg";
 import amropaliImg from "@/assets/amropali.jpg";
@@ -146,6 +147,7 @@ himsagor: { name: "খিরসাপাত / হিমসাগর", sub: "Khir
 bari4: { name: "বারি ৪", sub: "Bari 4", desc: "আঁশমুক্ত, মিষ্টি ও সুগন্ধি — বাংলাদেশ কৃষি গবেষণা ইনস্টিটিউটের উদ্ভাবন।" },
 },
 pkgSub: { "10": "পারিবারিক প্যাক", "20": "সেরা দাম", "40": "বাল্ক প্যাক" },
+pkgPriceLabel: "দাম",
 },
 en: {
 brand: "Amerbari",
@@ -231,6 +233,7 @@ himsagor: { name: "Khirsapat / Himsagor", sub: "খিরসাপাত / হ�
 bari4: { name: "Bari 4", sub: "বারি ৪", desc: "Fiberless, sweet and aromatic — developed by the Bangladesh Agricultural Research Institute." },
 },
 pkgSub: { "10": "Family pack", "20": "Best value", "40": "Bulk pack" },
+pkgPriceLabel: "Price",
 },
 } as const;
 
@@ -794,6 +797,7 @@ onKeyDown={(e) => e.stopPropagation()}
 <div className="grid grid-cols-3 gap-2.5">
 {(Object.keys(PACKAGE_KG) as Pkg[]).map((p) => {
 const pkgActive = line.pkg === p;
+const pkgPrice = PACKAGE_KG[p] * PRICE_PER_KG[key];
 return (
 <button
 key={p}
@@ -808,6 +812,9 @@ aria-pressed={pkgActive}
 <div className="text-sm font-extrabold leading-none">{p} KG</div>
 <div className="mt-1.5 text-[11px] text-muted-foreground leading-tight whitespace-normal break-words">
 {t.pkgSub[p]}
+</div>
+<div className="mt-1 text-[12px] font-bold text-primary tabular-nums leading-tight">
+{t.pkgPriceLabel}: ৳{pkgPrice}
 </div>
 </button>
 );
@@ -1158,6 +1165,19 @@ disabled={selectedEntries.length === 0 || isSubmitting}
 <span className="text-sm font-medium">{t.fbLink}</span>
 </a>
 </div>
+<div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs sm:text-sm">
+  <Link to="/privacy-policy" className="hover:text-primary transition-colors">
+    {lang === "bn" ? "প্রাইভেসি পলিসি" : "Privacy Policy"}
+  </Link>
+  <span className="text-border">•</span>
+  <Link to="/refund-policy" className="hover:text-primary transition-colors">
+    {lang === "bn" ? "রিফান্ড পলিসি" : "Refund Policy"}
+  </Link>
+  <span className="text-border">•</span>
+  <Link to="/terms-and-conditions" className="hover:text-primary transition-colors">
+    {lang === "bn" ? "টার্মস অ্যান্ড কন্ডিশনস" : "Terms & Conditions"}
+  </Link>
+</div>
 <p className="mt-4 text-xs">📍 {t.location} • © {new Date().getFullYear()}</p>
 </div>
 </footer>
@@ -1270,6 +1290,9 @@ return (
 <Route path="/" element={<Landing />} />
 <Route path="/order-confirmation" element={<OrderConfirmation />} />
 <Route path="/thank-you" element={<OrderConfirmation />} />
+<Route path="/privacy-policy" element={<PolicyPage />} />
+<Route path="/refund-policy" element={<PolicyPage />} />
+<Route path="/terms-and-conditions" element={<PolicyPage />} />
 </Routes>
 );
 }
