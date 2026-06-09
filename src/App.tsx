@@ -2,21 +2,12 @@ import { useMemo, useState, useEffect } from "react";
 import { Routes, Route, useNavigate, Link } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { Check, Leaf, Phone, ShieldCheck, Truck, User, MapPin, Mail, Home, Languages, Facebook, LayoutGrid, List, ShoppingBag, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
-import UPAZILAS_DATA from "./upazilas.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-Select,
-SelectContent,
-SelectItem,
-SelectTrigger,
-SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { getDistrictList, getUpazilaLabel, getUpazilasForDistrict } from "@/lib/bangladeshLocations";
 import { saveOrderReceipt } from "@/lib/orderStorage";
 import type { OrderReceipt } from "@/types/order";
 import OrderConfirmation from "@/pages/OrderConfirmation";
@@ -112,11 +103,10 @@ mobile: "মোবাইল নম্বর",
 mobileError: "মোবাইল নম্বর অবশ্যই ১১ সংখ্যার হতে হবে (শুধুমাত্র সংখ্যা)।",
 email: "ইমেইল",
 optional: "(ঐচ্ছিক)",
-area: "ডেলিভারি এলাকা",
-selectDistrict: "আপনার জেলা নির্বাচন করুন",
+area: "ডেলিভারি এলাকা (জেলা)",
+districtPh: "যেমন: রাজশাহী, ঢাকা, বান্দরবান",
 upazilaThana: "উপজেলা / থানা",
-selectUpazila: "উপজেলা / থানা নির্বাচন করুন",
-upazilaManualPh: "উপজেলা বা থানার নাম লিখুন",
+upazilaManualPh: "যেমন: মোহনপুর, ধানমন্ডি",
 address: "সম্পূর্ণ ঠিকানা",
 addressPh: "বাড়ি নং, রোড নং, এলাকা, থানা...",
 summary: "প্রি-অর্ডার সারাংশ",
@@ -198,11 +188,10 @@ mobile: "Mobile Number",
 mobileError: "Mobile number must be exactly 11 digits (numbers only, no country code).",
 email: "Email",
 optional: "(Optional)",
-area: "Delivery Area",
-selectDistrict: "Select your district",
+area: "Delivery area (district)",
+districtPh: "e.g. Rajshahi, Dhaka, Bandarban",
 upazilaThana: "Upazila / Thana",
-selectUpazila: "Select upazila / thana",
-upazilaManualPh: "Type upazila or thana name",
+upazilaManualPh: "e.g. Mohanpur, Dhanmondi",
 address: "Full Address",
 addressPh: "House No, Road No, Area, Thana...",
 summary: "Pre-Order Summary",
@@ -250,20 +239,6 @@ amropali: 110,
 himsagor: 110,
 bari4: 130,
 };
-
-const DISTRICTS_BN: Record<string, string> = {
-"Bagerhat": "বাগেরহাট", "Bandarban": "বান্দরবান", "Barguna": "বরগুনা", "Barishal": "বরিশাল", "Bhola": "ভোলা", "Bogura": "বগুড়া", "Brahmanbaria": "ব্রাহ্মণবাড়িয়া", "Chandpur": "চাঁদপুর",
-"Chattogram": "চট্টগ্রাম", "Chuadanga": "চুয়াডাঙ্গা", "Cox's Bazar": "কক্সবাজার", "Cumilla": "কুমিল্লা", "Dhaka": "ঢাকা", "Dinajpur": "দিনাজপুর", "Faridpur": "ফরিদপুর", "Feni": "ফেনী",
-"Gaibandha": "গাইবান্ধা", "Gazipur": "গাজীপুর", "Gopalganj": "গোপালগঞ্জ", "Habiganj": "হবিগঞ্জ", "Jamalpur": "জামালপুর", "Jashore": "যশোর", "Jhalokati": "ঝালকাঠি", "Jhenaidah": "ঝিনাইদহ",
-"Joypurhat": "জয়পুরহাট", "Khagrachhari": "খাগড়াছড়ি", "Khulna": "খুলনা", "Kishoreganj": "কিশোরগঞ্জ", "Kurigram": "কুড়িগ্রাম", "Kushtia": "কুষ্টিয়া", "Lakshmipur": "লক্ষ্মীপুর", "Lalmonirhat": "লালমনিরহাট",
-"Madaripur": "মাদারীপুর", "Magura": "মাগুরা", "Manikganj": "মানিকগঞ্জ", "Meherpur": "মেহেরপুর", "Moulvibazar": "মৌলভীবাজার", "Munshiganj": "মুন্সীগঞ্জ", "Mymensingh": "ময়মনসিংহ", "Naogaon": "নওগাঁ",
-"Narail": "নড়াইল", "Narayanganj": "নারায়ণগঞ্জ", "Narsingdi": "নরসিংদী", "Natore": "নাটোর", "Netrokona": "নেত্রকোনা", "Nilphamari": "নীলফামারী", "Noakhali": "নোয়াখালী", "Pabna": "পাবনা",
-"Panchagarh": "পঞ্চগড়", "Patuakhali": "পটুয়াখালী", "Pirojpur": "পিরোজপুর", "Rajbari": "রাজবাড়ী", "Rajshahi": "রাজশাহী", "Rangamati": "রাঙ্গামাটি", "Rangpur": "রংপুর", "Satkhira": "সাতক্ষীরা",
-"Shariatpur": "শরীয়তপুর", "Sherpur": "শেরপুর", "Sirajganj": "সিরাজগঞ্জ", "Sunamganj": "সুনামগঞ্জ", "Sylhet": "সিলেট", "Tangail": "টাঙ্গাইল", "Thakurgaon": "ঠাকুরগাঁও",
-"Chapainawabganj": "চাঁপাইনবাবগঞ্জ",
-};
-
-const DISTRICTS = getDistrictList(Object.keys(DISTRICTS_BN));
 
 const PACKAGE_KG: Record<Pkg, number> = { "10": 10, "20": 20, "40": 40 };
 const DELIVERY_FEES: Record<Delivery, Record<Pkg, number>> = {
@@ -445,7 +420,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     toast.error(t.selectProducts);
     return;
   }
-  if (!form.name || !form.mobile || !form.area || !form.upazila || !form.address) {
+  if (!form.name.trim() || !form.mobile || !form.area.trim() || !form.upazila.trim() || !form.address.trim()) {
     toast.error(t.fillAll);
     return;
   }
@@ -465,9 +440,9 @@ const handleSubmit = async (e: React.FormEvent) => {
       mobile: form.mobile,
       email: form.email || "",
       district: form.area,
-      districtLabel: lang === "bn" ? (DISTRICTS_BN[form.area] ?? form.area) : form.area,
+      districtLabel: form.area.trim(),
       upazila: form.upazila,
-      upazilaLabel: getUpazilaLabel(form.area, form.upazila, lang),
+      upazilaLabel: form.upazila.trim(),
       address: form.address,
     },
     delivery,
@@ -1009,53 +984,23 @@ type="email"
 icon={<Mail className="h-4 w-4" />} placeholder="you@example.com"
 value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
 </div>
-<div className="space-y-2">
-<Label className="text-sm font-semibold">
-{t.area} (District) <span className="text-destructive">*</span>
-</Label>
-<Select required value={form.area} onValueChange={(v) => setForm({ ...form, area: v, upazila: "" })}>
-<SelectTrigger className="h-11">
-<SelectValue placeholder={t.selectDistrict} />
-</SelectTrigger>
-<SelectContent>
-{DISTRICTS.map((d) => (
-<SelectItem key={d} value={d}>
-{lang === "bn" ? DISTRICTS_BN[d] : d}
-</SelectItem>
-))}
-</SelectContent>
-</Select>
-</div>
-
-{form.area && (
-<div className="space-y-2">
-<Label className="text-sm font-semibold">
-{t.upazilaThana} <span className="text-destructive">*</span>
-</Label>
-{getUpazilasForDistrict(form.area).length > 0 ? (
-<Select required value={form.upazila} onValueChange={(v) => setForm({ ...form, upazila: v })}>
-<SelectTrigger className="h-11">
-<SelectValue placeholder={t.selectUpazila} />
-</SelectTrigger>
-<SelectContent>
-{getUpazilasForDistrict(form.area).map((u) => (
-<SelectItem key={u.en} value={u.en}>
-{lang === "bn" ? u.bn : u.en}
-</SelectItem>
-))}
-</SelectContent>
-</Select>
-) : (
-<Input
+<div className="grid gap-5 sm:grid-cols-2">
+<Field
+label={t.area}
 required
-className="h-11"
+icon={<MapPin className="h-4 w-4" />}
+placeholder={t.districtPh}
+value={form.area}
+onChange={(v) => setForm({ ...form, area: v })}
+/>
+<Field
+label={t.upazilaThana}
+required
 placeholder={t.upazilaManualPh}
 value={form.upazila}
-onChange={(e) => setForm({ ...form, upazila: e.target.value })}
+onChange={(v) => setForm({ ...form, upazila: v })}
 />
-)}
 </div>
-)}
 <div className="space-y-2">
 <Label className="text-sm font-semibold">
 {t.address} <span className="text-destructive">*</span>
